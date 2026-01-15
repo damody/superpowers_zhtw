@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Test runner for Claude Code skills
-# Tests skills by invoking Claude Code CLI and verifying behavior
+# Claude Code 技能測試運行器
+# 通過調用 Claude Code CLI 並驗證行為來測試技能
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -15,14 +15,14 @@ echo "Test time: $(date)"
 echo "Claude version: $(claude --version 2>/dev/null || echo 'not found')"
 echo ""
 
-# Check if Claude Code is available
+# 檢查 Claude Code 是否可用
 if ! command -v claude &> /dev/null; then
     echo "ERROR: Claude Code CLI not found"
     echo "Install Claude Code first: https://code.claude.com"
     exit 1
 fi
 
-# Parse command line arguments
+# 解析命令行參數
 VERBOSE=false
 SPECIFIC_TEST=""
 TIMEOUT=300  # Default 5 minute timeout per test
@@ -71,32 +71,32 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# List of skill tests to run (fast unit tests)
+# 要運行的技能測試列表(快速單元測試)
 tests=(
     "test-subagent-driven-development.sh"
 )
 
-# Integration tests (slow, full execution)
+# 集成測試(慢速,完整執行)
 integration_tests=(
     "test-subagent-driven-development-integration.sh"
 )
 
-# Add integration tests if requested
+# 如果要求,添加集成測試
 if [ "$RUN_INTEGRATION" = true ]; then
     tests+=("${integration_tests[@]}")
 fi
 
-# Filter to specific test if requested
+# 如果要求,篩選到特定測試
 if [ -n "$SPECIFIC_TEST" ]; then
     tests=("$SPECIFIC_TEST")
 fi
 
-# Track results
+# 追蹤結果
 passed=0
 failed=0
 skipped=0
 
-# Run each test
+# 運行每個測試
 for test in "${tests[@]}"; do
     echo "----------------------------------------"
     echo "Running: $test"
@@ -137,7 +137,7 @@ for test in "${tests[@]}"; do
             failed=$((failed + 1))
         fi
     else
-        # Capture output for non-verbose mode
+        # 捕獲非詳細模式下的輸出
         if output=$(timeout "$TIMEOUT" bash "$test_path" 2>&1); then
             end_time=$(date +%s)
             duration=$((end_time - start_time))
@@ -162,7 +162,7 @@ for test in "${tests[@]}"; do
     echo ""
 done
 
-# Print summary
+# 打印摘要
 echo "========================================"
 echo " Test Results Summary"
 echo "========================================"

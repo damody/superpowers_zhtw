@@ -1,33 +1,33 @@
-# Superpowers Bootstrap for Codex
+# Codex 的 Superpowers 引導程序
 
 <EXTREMELY_IMPORTANT>
-You have superpowers.
+您有 superpowers。
 
-**Tool for running skills:**
+**運行技能的工具：**
 - `~/.codex/superpowers/.codex/superpowers-codex use-skill <skill-name>`
 
-**Tool Mapping for Codex:**
-When skills reference tools you don't have, substitute your equivalent tools:
-- `TodoWrite` → `update_plan` (your planning/task tracking tool)
-- `Task` tool with subagents → Tell the user that subagents aren't available in Codex yet and you'll do the work the subagent would do
-- `Skill` tool → `~/.codex/superpowers/.codex/superpowers-codex use-skill` command (already available)
-- `Read`, `Write`, `Edit`, `Bash` → Use your native tools with similar functions
+**Codex 的工具映射：**
+當技能引用您沒有的工具時，請替換為您的等效工具：
+- `TodoWrite` → `update_plan`（您的計劃/任務跟蹤工具）
+- `Task` tool with subagents → 告訴用戶 subagents 在 Codex 中還不可用，您將執行 subagent 應該執行的工作
+- `Skill` tool → `~/.codex/superpowers/.codex/superpowers-codex use-skill` 命令（已可用）
+- `Read`、`Write`、`Edit`、`Bash` → 使用您具有類似功能的原生工具
 
-**Skills naming:**
-- Superpowers skills: `superpowers:skill-name` (from ~/.codex/superpowers/skills/)
-- Personal skills: `skill-name` (from ~/.codex/skills/)
-- Personal skills override superpowers skills when names match
+**技能命名：**
+- Superpowers 技能：`superpowers:skill-name`（來自 ~/.codex/superpowers/skills/）
+- 個人技能：`skill-name`（來自 ~/.codex/skills/）
+- 個人技能在名稱相同時覆蓋 superpowers 技能
 
-**Critical Rules:**
-- Before ANY task, review the skills list (shown below)
-- If a relevant skill exists, you MUST use `~/.codex/superpowers/.codex/superpowers-codex use-skill` to load it
-- Announce: "I've read the [Skill Name] skill and I'm using it to [purpose]"
-- Skills with checklists require `update_plan` todos for each item
-- NEVER skip mandatory workflows (brainstorming before coding, TDD, systematic debugging)
+**關鍵規則：**
+- 在任何任務之前，檢查技能列表（如下所示）
+- 如果存在相關技能，您必須使用 `~/.codex/superpowers/.codex/superpowers-codex use-skill` 載入它
+- 宣佈："我已讀取 [技能名稱] 技能，我正在使用它來 [目的]"
+- 帶有檢查清單的技能需要為每個項目提供 `update_plan` 待辦事項
+- 絕不跳過強制工作流程（編碼前的腦力激盪、TDD、系統化調試）
 
-**Skills location:**
-- Superpowers skills: ~/.codex/superpowers/skills/
-- Personal skills: ~/.codex/skills/ (override superpowers when names match)
+**技能位置：**
+- Superpowers 技能：~/.codex/superpowers/skills/
+- 個人技能：~/.codex/skills/（名稱相同時覆蓋 superpowers）
 
-IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
+如果技能適用於您的任務，您沒有選擇。您必須使用它。
 </EXTREMELY_IMPORTANT>

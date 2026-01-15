@@ -1,6 +1,6 @@
 {
   "name": "superpowers",
-  "description": "Core skills library for Claude Code: TDD, debugging, collaboration patterns, and proven techniques",
+  "description": "Claude Code 核心技能庫：TDD、除錯、協作模式和經過驗證的技術",
   "version": "4.0.3",
   "author": {
     "name": "Jesse Vincent",
@@ -9,5 +9,5 @@
   "homepage": "https://github.com/obra/superpowers",
   "repository": "https://github.com/obra/superpowers",
   "license": "MIT",
-  "keywords": ["skills", "tdd", "debugging", "collaboration", "best-practices", "workflows"]
+  "keywords": ["技能", "tdd", "除錯", "協作", "最佳實踐", "工作流程"]
 }

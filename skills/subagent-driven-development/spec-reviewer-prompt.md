@@ -1,61 +1,61 @@
-# Spec Compliance Reviewer Prompt Template
+# 規格合規審查員提示範本
 
-Use this template when dispatching a spec compliance reviewer subagent.
+在分派規格合規審查員子代理時使用此範本。
 
-**Purpose:** Verify implementer built what was requested (nothing more, nothing less)
+**目的:** 驗證實現者構建了被要求的內容 (不多不少)
 
 ```
-Task tool (general-purpose):
-  description: "Review spec compliance for Task N"
+任務工具 (通用):
+  description: "檢查任務 N 的規格合規性"
   prompt: |
-    You are reviewing whether an implementation matches its specification.
+    你正在檢查一個實現是否與其規格相符。
 
-    ## What Was Requested
+    ## 被要求的內容
 
-    [FULL TEXT of task requirements]
+    [任務需求的完整文本]
 
-    ## What Implementer Claims They Built
+    ## 實現者聲稱他們構建的內容
 
-    [From implementer's report]
+    [來自實現者的報告]
 
-    ## CRITICAL: Do Not Trust the Report
+    ## 關鍵: 不要相信報告
 
-    The implementer finished suspiciously quickly. Their report may be incomplete,
-    inaccurate, or optimistic. You MUST verify everything independently.
+    實現者完成得可疑地快。他們的報告可能不完整、
+    不準確或過於樂觀。你必須獨立驗證所有內容。
 
-    **DO NOT:**
-    - Take their word for what they implemented
-    - Trust their claims about completeness
-    - Accept their interpretation of requirements
+    **不要:**
+    - 相信他們關於所實現內容的說法
+    - 相信他們關於完整性的聲稱
+    - 接受他們對需求的解釋
 
-    **DO:**
-    - Read the actual code they wrote
-    - Compare actual implementation to requirements line by line
-    - Check for missing pieces they claimed to implement
-    - Look for extra features they didn't mention
+    **要:**
+    - 閱讀他們實際編寫的代碼
+    - 將實際實現逐行與需求進行比較
+    - 檢查他們聲稱已實現的缺失部分
+    - 查找他們沒有提及的額外功能
 
-    ## Your Job
+    ## 你的工作
 
-    Read the implementation code and verify:
+    讀取實現代碼並驗證:
 
-    **Missing requirements:**
-    - Did they implement everything that was requested?
-    - Are there requirements they skipped or missed?
-    - Did they claim something works but didn't actually implement it?
+    **缺失的需求:**
+    - 他們是否實現了所有被要求的內容?
+    - 有沒有他們跳過或遺漏的需求?
+    - 他們聲稱某些功能有效但實際上沒有實現嗎?
 
-    **Extra/unneeded work:**
-    - Did they build things that weren't requested?
-    - Did they over-engineer or add unnecessary features?
-    - Did they add "nice to haves" that weren't in spec?
+    **額外/不需要的工作:**
+    - 他們是否構建了未被要求的東西?
+    - 他們是否過度工程化或添加了不必要的功能?
+    - 他們是否添加了規格中沒有的"錦上添花"功能?
 
-    **Misunderstandings:**
-    - Did they interpret requirements differently than intended?
-    - Did they solve the wrong problem?
-    - Did they implement the right feature but wrong way?
+    **誤解:**
+    - 他們是否以不同於預期的方式解釋了需求?
+    - 他們是否解決了錯誤的問題?
+    - 他們是否實現了正確的功能但用錯誤的方式?
 
-    **Verify by reading code, not by trusting report.**
+    **通過閱讀代碼驗證，不要相信報告。**
 
-    Report:
-    - ✅ Spec compliant (if everything matches after code inspection)
-    - ❌ Issues found: [list specifically what's missing or extra, with file:line references]
+    報告:
+    - ✅ 規格合規 (如果代碼檢查後一切匹配)
+    - ❌ 發現問題: [具體列出缺少或額外的內容，帶著 file:line 參考]
 ```

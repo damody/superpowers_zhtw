@@ -1,8 +1,8 @@
 /**
- * Superpowers plugin for OpenCode.ai
+ * OpenCode.ai 的 Superpowers 插件
  *
- * Provides custom tools for loading and discovering skills,
- * with prompt generation for agent configuration.
+ * 提供用於加載和發現技能的自訂工具，
+ * 以及用於代理配置的提示生成。
  */
 
 import path from 'path';
@@ -17,11 +17,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const SuperpowersPlugin = async ({ client, directory }) => {
   const homeDir = os.homedir();
   const projectSkillsDir = path.join(directory, '.opencode/skills');
-  // Derive superpowers skills dir from plugin location (works for both symlinked and local installs)
+  // 從插件位置派生 superpowers 技能目錄 (適用於符號連接和本地安裝)
   const superpowersSkillsDir = path.resolve(__dirname, '../../skills');
   const personalSkillsDir = path.join(homeDir, '.config/opencode/skills');
 
-  // Helper to generate bootstrap content
+  // 生成啟動內容的輔助函數
   const getBootstrapContent = (compact = false) => {
     const usingSuperpowersPath = skillsCore.resolveSkillPath('using-superpowers', superpowersSkillsDir, personalSkillsDir);
     if (!usingSuperpowersPath) return null;
@@ -57,7 +57,7 @@ ${toolMapping}
 </EXTREMELY_IMPORTANT>`;
   };
 
-  // Helper to inject bootstrap via session.prompt
+  // 通過 session.prompt 注入啟動內容的輔助函數
   const injectBootstrap = async (sessionID, compact = false) => {
     const bootstrapContent = getBootstrapContent(compact);
     if (!bootstrapContent) return false;
@@ -86,14 +86,14 @@ ${toolMapping}
         execute: async (args, context) => {
           const { skill_name } = args;
 
-          // Resolve with priority: project > personal > superpowers
-          // Check for project: prefix first
+          // 按優先級解析: project > personal > superpowers
+          // 首先檢查 project: 前綴
           const forceProject = skill_name.startsWith('project:');
           const actualSkillName = forceProject ? skill_name.replace(/^project:/, '') : skill_name;
 
           let resolved = null;
 
-          // Try project skills first (if project: prefix or no prefix)
+          // 首先嘗試項目技能 (如果有 project: 前綴或沒有前綴)
           if (forceProject || !skill_name.startsWith('superpowers:')) {
             const projectPath = path.join(projectSkillsDir, actualSkillName);
             const projectSkillFile = path.join(projectPath, 'SKILL.md');
@@ -106,7 +106,7 @@ ${toolMapping}
             }
           }
 
-          // Fall back to personal/superpowers resolution
+          // 回退到個人/superpowers 解析
           if (!resolved && !forceProject) {
             resolved = skillsCore.resolveSkillPath(skill_name, superpowersSkillsDir, personalSkillsDir);
           }
@@ -125,7 +125,7 @@ ${toolMapping}
 # Supporting tools and docs are in ${skillDirectory}
 # ============================================`;
 
-          // Insert as user message with noReply for persistence across compaction
+          // 作為用戶消息插入，使用 noReply 以保持跨壓縮的持久性
           try {
             await client.session.prompt({
               path: { id: context.sessionID },
@@ -138,7 +138,7 @@ ${toolMapping}
               }
             });
           } catch (err) {
-            // Fallback: return content directly if message insertion fails
+            // 回退: 如果消息插入失敗，直接返回內容
             return `${skillHeader}\n\n${content}`;
           }
 
@@ -153,7 +153,7 @@ ${toolMapping}
           const personalSkills = skillsCore.findSkillsInDir(personalSkillsDir, 'personal', 3);
           const superpowersSkills = skillsCore.findSkillsInDir(superpowersSkillsDir, 'superpowers', 3);
 
-          // Priority: project > personal > superpowers
+          // 優先級: project > personal > superpowers
           const allSkills = [...projectSkills, ...personalSkills, ...superpowersSkills];
 
           if (allSkills.length === 0) {
@@ -188,14 +188,14 @@ ${toolMapping}
       })
     },
     event: async ({ event }) => {
-      // Extract sessionID from various event structures
+      // 從各種事件結構中提取 sessionID
       const getSessionID = () => {
         return event.properties?.info?.id ||
                event.properties?.sessionID ||
                event.session?.id;
       };
 
-      // Inject bootstrap at session creation (before first user message)
+      // 在會話創建時注入啟動內容 (在第一條用戶消息前)
       if (event.type === 'session.created') {
         const sessionID = getSessionID();
         if (sessionID) {
@@ -203,7 +203,7 @@ ${toolMapping}
         }
       }
 
-      // Re-inject bootstrap after context compaction (compact version to save tokens)
+      // 在上下文壓縮後重新注入啟動內容 (壓縮版本以節省令牌)
       if (event.type === 'session.compacted') {
         const sessionID = getSessionID();
         if (sessionID) {

@@ -1,82 +1,82 @@
 # Superpowers for OpenCode
 
-Complete guide for using Superpowers with [OpenCode.ai](https://opencode.ai).
+Superpowers 與 [OpenCode.ai](https://opencode.ai) 搭配使用的完整指南。
 
-## Quick Install
+## 快速安裝
 
-Tell OpenCode:
+告訴 OpenCode：
 
 ```
 Clone https://github.com/obra/superpowers to ~/.config/opencode/superpowers, then create directory ~/.config/opencode/plugin, then symlink ~/.config/opencode/superpowers/.opencode/plugin/superpowers.js to ~/.config/opencode/plugin/superpowers.js, then restart opencode.
 ```
 
-## Manual Installation
+## 手動安裝
 
-### Prerequisites
+### 先決條件
 
-- [OpenCode.ai](https://opencode.ai) installed
-- Node.js installed
-- Git installed
+- [OpenCode.ai](https://opencode.ai) 已安裝
+- Node.js 已安裝
+- Git 已安裝
 
-### Installation Steps
+### 安裝步驟
 
-#### 1. Install Superpowers
+#### 1. 安裝 Superpowers
 
 ```bash
 mkdir -p ~/.config/opencode/superpowers
 git clone https://github.com/obra/superpowers.git ~/.config/opencode/superpowers
 ```
 
-#### 2. Register the Plugin
+#### 2. 註冊插件
 
-OpenCode discovers plugins from `~/.config/opencode/plugin/`. Create a symlink:
+OpenCode 從 `~/.config/opencode/plugin/` 中發現插件。創建符號連結：
 
 ```bash
 mkdir -p ~/.config/opencode/plugin
 ln -sf ~/.config/opencode/superpowers/.opencode/plugin/superpowers.js ~/.config/opencode/plugin/superpowers.js
 ```
 
-Alternatively, for project-local installation:
+或者，用於專案本地安裝：
 
 ```bash
-# In your OpenCode project
+# 在您的 OpenCode 專案中
 mkdir -p .opencode/plugin
 ln -sf ~/.config/opencode/superpowers/.opencode/plugin/superpowers.js .opencode/plugin/superpowers.js
 ```
 
-#### 3. Restart OpenCode
+#### 3. 重新啟動 OpenCode
 
-Restart OpenCode to load the plugin. Superpowers will automatically activate.
+重新啟動 OpenCode 以載入插件。Superpowers 將自動啟動。
 
-## Usage
+## 使用方法
 
-### Finding Skills
+### 查找技能
 
-Use the `find_skills` tool to list all available skills:
+使用 `find_skills` 工具列出所有可用技能：
 
 ```
 use find_skills tool
 ```
 
-### Loading a Skill
+### 載入技能
 
-Use the `use_skill` tool to load a specific skill:
+使用 `use_skill` 工具載入特定技能：
 
 ```
 use use_skill tool with skill_name: "superpowers:brainstorming"
 ```
 
-Skills are automatically inserted into the conversation and persist across context compaction.
+技能會自動插入對話中，並在上下文壓縮時保持存在。
 
-### Personal Skills
+### 個人技能
 
-Create your own skills in `~/.config/opencode/skills/`:
+在 `~/.config/opencode/skills/` 中創建您自己的技能：
 
 ```bash
 mkdir -p ~/.config/opencode/skills/my-skill
 ```
 
-Create `~/.config/opencode/skills/my-skill/SKILL.md`:
+創建 `~/.config/opencode/skills/my-skill/SKILL.md`：
 
 ```markdown
 ---
@@ -89,16 +89,16 @@ description: Use when [condition] - [what it does]
 [Your skill content here]
 ```
 
-### Project Skills
+### 專案技能
 
-Create project-specific skills in your OpenCode project:
+在您的 OpenCode 專案中創建專案特定技能：
 
 ```bash
-# In your OpenCode project
+# 在您的 OpenCode 專案中
 mkdir -p .opencode/skills/my-project-skill
 ```
 
-Create `.opencode/skills/my-project-skill/SKILL.md`:
+創建 `.opencode/skills/my-project-skill/SKILL.md`：
 
 ```markdown
 ---
@@ -111,124 +111,124 @@ description: Use when [condition] - [what it does]
 [Your skill content here]
 ```
 
-## Skill Priority
+## 技能優先級
 
-Skills are resolved with this priority order:
+技能按以下優先級順序解析：
 
-1. **Project skills** (`.opencode/skills/`) - Highest priority
-2. **Personal skills** (`~/.config/opencode/skills/`)
-3. **Superpowers skills** (`~/.config/opencode/superpowers/skills/`)
+1. **專案技能** (`.opencode/skills/`) - 最高優先級
+2. **個人技能** (`~/.config/opencode/skills/`)
+3. **Superpowers 技能** (`~/.config/opencode/superpowers/skills/`)
 
-You can force resolution to a specific level:
-- `project:skill-name` - Force project skill
-- `skill-name` - Search project → personal → superpowers
-- `superpowers:skill-name` - Force superpowers skill
+您可以強制解析到特定級別：
+- `project:skill-name` - 強制專案技能
+- `skill-name` - 搜索專案 → 個人 → superpowers
+- `superpowers:skill-name` - 強制 superpowers 技能
 
-## Features
+## 功能特點
 
-### Automatic Context Injection
+### 自動上下文注入
 
-The plugin automatically injects superpowers context via the chat.message hook on every session. No manual configuration needed.
+插件通過 chat.message 鉤子在每個會話上自動注入 superpowers 上下文。無需手動配置。
 
-### Message Insertion Pattern
+### 消息插入模式
 
-When you load a skill with `use_skill`, it's inserted as a user message with `noReply: true`. This ensures skills persist throughout long conversations, even when OpenCode compacts context.
+當您使用 `use_skill` 載入技能時，它將作為設置了 `noReply: true` 的用戶消息插入。這確保技能在長對話中保持存在，即使在 OpenCode 壓縮上下文時也不例外。
 
-### Compaction Resilience
+### 壓縮恢復力
 
-The plugin listens for `session.compacted` events and automatically re-injects the core superpowers bootstrap to maintain functionality after context compaction.
+插件偵聽 `session.compacted` 事件，並自動重新注入核心 superpowers 引導程序以在上下文壓縮後維持功能。
 
-### Tool Mapping
+### 工具映射
 
-Skills written for Claude Code are automatically adapted for OpenCode. The plugin provides mapping instructions:
+為 Claude Code 編寫的技能會自動為 OpenCode 調整。插件提供映射說明：
 
 - `TodoWrite` → `update_plan`
-- `Task` with subagents → OpenCode's `@mention` system
-- `Skill` tool → `use_skill` custom tool
-- File operations → Native OpenCode tools
+- `Task` with subagents → OpenCode 的 `@mention` 系統
+- `Skill` tool → `use_skill` 自訂工具
+- 文件操作 → OpenCode 原生工具
 
-## Architecture
+## 架構
 
-### Plugin Structure
+### 插件結構
 
-**Location:** `~/.config/opencode/superpowers/.opencode/plugin/superpowers.js`
+**位置：** `~/.config/opencode/superpowers/.opencode/plugin/superpowers.js`
 
-**Components:**
-- Two custom tools: `use_skill`, `find_skills`
-- chat.message hook for initial context injection
-- event handler for session.compacted re-injection
-- Uses shared `lib/skills-core.js` module (also used by Codex)
+**組件：**
+- 兩個自訂工具：`use_skill`、`find_skills`
+- 用於初始上下文注入的 chat.message 鉤子
+- 用於會話壓縮重新注入的事件處理程序
+- 使用共享 `lib/skills-core.js` 模塊（Codex 也使用）
 
-### Shared Core Module
+### 共享核心模塊
 
-**Location:** `~/.config/opencode/superpowers/lib/skills-core.js`
+**位置：** `~/.config/opencode/superpowers/lib/skills-core.js`
 
-**Functions:**
-- `extractFrontmatter()` - Parse skill metadata
-- `stripFrontmatter()` - Remove metadata from content
-- `findSkillsInDir()` - Recursive skill discovery
-- `resolveSkillPath()` - Skill resolution with shadowing
-- `checkForUpdates()` - Git update detection
+**功能：**
+- `extractFrontmatter()` - 解析技能元數據
+- `stripFrontmatter()` - 從內容中移除元數據
+- `findSkillsInDir()` - 遞迴技能發現
+- `resolveSkillPath()` - 技能解析及遮蔽
+- `checkForUpdates()` - Git 更新檢測
 
-This module is shared between OpenCode and Codex implementations for code reuse.
+此模塊在 OpenCode 和 Codex 實現之間共享以進行代碼重用。
 
-## Updating
+## 更新
 
 ```bash
 cd ~/.config/opencode/superpowers
 git pull
 ```
 
-Restart OpenCode to load the updates.
+重新啟動 OpenCode 以載入更新。
 
-## Troubleshooting
+## 故障排除
 
-### Plugin not loading
+### 插件未載入
 
-1. Check plugin file exists: `ls ~/.config/opencode/superpowers/.opencode/plugin/superpowers.js`
-2. Check symlink: `ls -l ~/.config/opencode/plugin/superpowers.js`
-3. Check OpenCode logs: `opencode run "test" --print-logs --log-level DEBUG`
-4. Look for: `service=plugin path=file:///.../superpowers.js loading plugin`
+1. 檢查插件文件是否存在：`ls ~/.config/opencode/superpowers/.opencode/plugin/superpowers.js`
+2. 檢查符號連結：`ls -l ~/.config/opencode/plugin/superpowers.js`
+3. 檢查 OpenCode 日誌：`opencode run "test" --print-logs --log-level DEBUG`
+4. 查找：`service=plugin path=file:///.../superpowers.js loading plugin`
 
-### Skills not found
+### 找不到技能
 
-1. Verify skills directory: `ls ~/.config/opencode/superpowers/skills`
-2. Use `find_skills` tool to see what's discovered
-3. Check skill structure: each skill needs a `SKILL.md` file
+1. 驗證技能目錄：`ls ~/.config/opencode/superpowers/skills`
+2. 使用 `find_skills` 工具查看發現的內容
+3. 檢查技能結構：每個技能都需要有 `SKILL.md` 文件
 
-### Tools not working
+### 工具不工作
 
-1. Verify plugin loaded: Check OpenCode logs for plugin loading message
-2. Check Node.js version: The plugin requires Node.js for ES modules
-3. Test plugin manually: `node --input-type=module -e "import('file://~/.config/opencode/plugin/superpowers.js').then(m => console.log(Object.keys(m)))"`
+1. 驗證插件已載入：檢查 OpenCode 日誌中的插件載入消息
+2. 檢查 Node.js 版本：插件需要 Node.js 以支持 ES 模塊
+3. 手動測試插件：`node --input-type=module -e "import('file://~/.config/opencode/plugin/superpowers.js').then(m => console.log(Object.keys(m)))"`
 
-### Context not injecting
+### 上下文未注入
 
-1. Check if chat.message hook is working
-2. Verify using-superpowers skill exists
-3. Check OpenCode version (requires recent version with plugin support)
+1. 檢查 chat.message 鉤子是否運行
+2. 驗證 using-superpowers 技能是否存在
+3. 檢查 OpenCode 版本（需要支持插件的最新版本）
 
-## Getting Help
+## 獲取幫助
 
-- Report issues: https://github.com/obra/superpowers/issues
-- Main documentation: https://github.com/obra/superpowers
-- OpenCode docs: https://opencode.ai/docs/
+- 報告問題：https://github.com/obra/superpowers/issues
+- 主文檔：https://github.com/obra/superpowers
+- OpenCode 文檔：https://opencode.ai/docs/
 
-## Testing
+## 測試
 
-The implementation includes an automated test suite at `tests/opencode/`:
+實現在 `tests/opencode/` 中包含自動化測試套件：
 
 ```bash
-# Run all tests
+# 運行所有測試
 ./tests/opencode/run-tests.sh --integration --verbose
 
-# Run specific test
+# 運行特定測試
 ./tests/opencode/run-tests.sh --test test-tools.sh
 ```
 
-Tests verify:
-- Plugin loading
-- Skills-core library functionality
-- Tool execution (use_skill, find_skills)
-- Skill priority resolution
-- Proper isolation with temp HOME
+測試驗證：
+- 插件載入
+- Skills-core 庫功能
+- 工具執行（use_skill、find_skills）
+- 技能優先級解析
+- 臨時 HOME 的適當隔離

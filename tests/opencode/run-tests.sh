@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Main test runner for OpenCode plugin test suite
-# Runs all tests and reports results
+# OpenCode 插件測試套件的主要測試運行器
+# 運行所有測試並報告結果
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -14,7 +14,7 @@ echo "Repository: $(cd ../.. && pwd)"
 echo "Test time: $(date)"
 echo ""
 
-# Parse command line arguments
+# 解析命令行參數
 RUN_INTEGRATION=false
 VERBOSE=false
 SPECIFIC_TEST=""
@@ -57,34 +57,34 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# List of tests to run (no external dependencies)
+# 要運行的測試列表(沒有外部依賴)
 tests=(
     "test-plugin-loading.sh"
     "test-skills-core.sh"
 )
 
-# Integration tests (require OpenCode)
+# 集成測試(需要 OpenCode)
 integration_tests=(
     "test-tools.sh"
     "test-priority.sh"
 )
 
-# Add integration tests if requested
+# 如果要求,添加集成測試
 if [ "$RUN_INTEGRATION" = true ]; then
     tests+=("${integration_tests[@]}")
 fi
 
-# Filter to specific test if requested
+# 如果要求,篩選到特定測試
 if [ -n "$SPECIFIC_TEST" ]; then
     tests=("$SPECIFIC_TEST")
 fi
 
-# Track results
+# 追蹤結果
 passed=0
 failed=0
 skipped=0
 
-# Run each test
+# 運行每個測試
 for test in "${tests[@]}"; do
     echo "----------------------------------------"
     echo "Running: $test"
@@ -120,7 +120,7 @@ for test in "${tests[@]}"; do
             failed=$((failed + 1))
         fi
     else
-        # Capture output for non-verbose mode
+        # 捕獲非詳細模式下的輸出
         if output=$(bash "$test_path" 2>&1); then
             end_time=$(date +%s)
             duration=$((end_time - start_time))
@@ -140,7 +140,7 @@ for test in "${tests[@]}"; do
     echo ""
 done
 
-# Print summary
+# 打印摘要
 echo "========================================"
 echo " Test Results Summary"
 echo "========================================"

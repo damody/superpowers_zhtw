@@ -1,87 +1,87 @@
 ---
 name: using-superpowers
-description: Use when starting any conversation - establishes how to find and use skills, requiring Skill tool invocation before ANY response including clarifying questions
+description: 在開始任何對話時使用 - 建立如何找到和使用技能的方式，要求在任何回應（包括澄清問題）之前調用 Skill 工具
 ---
 
 <EXTREMELY-IMPORTANT>
-If you think there is even a 1% chance a skill might apply to what you are doing, you ABSOLUTELY MUST invoke the skill.
+如果您認為有哪怕 1% 的可能性某個技能可能適用於您正在做的事情，您絕對必須調用該技能。
 
-IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
+如果某個技能適用於您的任務，您別無選擇。您必須使用它。
 
-This is not negotiable. This is not optional. You cannot rationalize your way out of this.
+這不可協商。這不是可選的。您無法為此找理由開脫。
 </EXTREMELY-IMPORTANT>
 
-## How to Access Skills
+## 如何訪問技能
 
-**In Claude Code:** Use the `Skill` tool. When you invoke a skill, its content is loaded and presented to you—follow it directly. Never use the Read tool on skill files.
+**在 Claude Code 中：** 使用 `Skill` 工具。當您調用技能時，其內容會被加載並呈現給您——直接遵循它。絕不要對技能文件使用 Read 工具。
 
-**In other environments:** Check your platform's documentation for how skills are loaded.
+**在其他環境中：** 查看您平台的文檔以了解技能如何加載。
 
-# Using Skills
+# 使用技能
 
-## The Rule
+## 規則
 
-**Invoke relevant or requested skills BEFORE any response or action.** Even a 1% chance a skill might apply means that you should invoke the skill to check. If an invoked skill turns out to be wrong for the situation, you don't need to use it.
+**在任何回應或行動之前調用相關或被請求的技能。** 即使只有 1% 的可能性某個技能可能適用，也意味著您應該調用該技能進行檢查。如果調用的技能結果不適合當前情況，您不需要使用它。
 
 ```dot
 digraph skill_flow {
-    "User message received" [shape=doublecircle];
-    "Might any skill apply?" [shape=diamond];
-    "Invoke Skill tool" [shape=box];
-    "Announce: 'Using [skill] to [purpose]'" [shape=box];
-    "Has checklist?" [shape=diamond];
-    "Create TodoWrite todo per item" [shape=box];
-    "Follow skill exactly" [shape=box];
-    "Respond (including clarifications)" [shape=doublecircle];
+    "收到用戶訊息" [shape=doublecircle];
+    "是否有技能可能適用？" [shape=diamond];
+    "調用 Skill 工具" [shape=box];
+    "宣告：'使用 [技能] 來 [目的]'" [shape=box];
+    "有檢查清單嗎？" [shape=diamond];
+    "為每個項目創建 TodoWrite todo" [shape=box];
+    "完全遵循技能" [shape=box];
+    "回應（包括澄清）" [shape=doublecircle];
 
-    "User message received" -> "Might any skill apply?";
-    "Might any skill apply?" -> "Invoke Skill tool" [label="yes, even 1%"];
-    "Might any skill apply?" -> "Respond (including clarifications)" [label="definitely not"];
-    "Invoke Skill tool" -> "Announce: 'Using [skill] to [purpose]'";
-    "Announce: 'Using [skill] to [purpose]'" -> "Has checklist?";
-    "Has checklist?" -> "Create TodoWrite todo per item" [label="yes"];
-    "Has checklist?" -> "Follow skill exactly" [label="no"];
-    "Create TodoWrite todo per item" -> "Follow skill exactly";
+    "收到用戶訊息" -> "是否有技能可能適用？";
+    "是否有技能可能適用？" -> "調用 Skill 工具" [label="是，即使只有 1%"];
+    "是否有技能可能適用？" -> "回應（包括澄清）" [label="絕對不"];
+    "調用 Skill 工具" -> "宣告：'使用 [技能] 來 [目的]'";
+    "宣告：'使用 [技能] 來 [目的]'" -> "有檢查清單嗎？";
+    "有檢查清單嗎？" -> "為每個項目創建 TodoWrite todo" [label="是"];
+    "有檢查清單嗎？" -> "完全遵循技能" [label="否"];
+    "為每個項目創建 TodoWrite todo" -> "完全遵循技能";
 }
 ```
 
-## Red Flags
+## 紅旗警示
 
-These thoughts mean STOP—you're rationalizing:
+這些想法意味著停止——您正在為自己找理由：
 
-| Thought | Reality |
-|---------|---------|
-| "This is just a simple question" | Questions are tasks. Check for skills. |
-| "I need more context first" | Skill check comes BEFORE clarifying questions. |
-| "Let me explore the codebase first" | Skills tell you HOW to explore. Check first. |
-| "I can check git/files quickly" | Files lack conversation context. Check for skills. |
-| "Let me gather information first" | Skills tell you HOW to gather information. |
-| "This doesn't need a formal skill" | If a skill exists, use it. |
-| "I remember this skill" | Skills evolve. Read current version. |
-| "This doesn't count as a task" | Action = task. Check for skills. |
-| "The skill is overkill" | Simple things become complex. Use it. |
-| "I'll just do this one thing first" | Check BEFORE doing anything. |
-| "This feels productive" | Undisciplined action wastes time. Skills prevent this. |
-| "I know what that means" | Knowing the concept ≠ using the skill. Invoke it. |
+| 想法 | 現實 |
+|------|------|
+| "這只是一個簡單的問題" | 問題也是任務。檢查技能。 |
+| "我需要先獲得更多背景" | 技能檢查在澄清問題之前。 |
+| "讓我先探索代碼庫" | 技能告訴您如何探索。先檢查。 |
+| "我可以快速檢查 git/文件" | 文件缺乏對話背景。檢查技能。 |
+| "讓我先收集信息" | 技能告訴您如何收集信息。 |
+| "這不需要正式的技能" | 如果技能存在，就使用它。 |
+| "我記得這個技能" | 技能會演變。閱讀當前版本。 |
+| "這不算是一個任務" | 行動 = 任務。檢查技能。 |
+| "這個技能太過頭了" | 簡單的事情會變複雜。使用它。 |
+| "我先做這一件事" | 在做任何事之前先檢查。 |
+| "這感覺很有成效" | 無紀律的行動浪費時間。技能防止這種情況。 |
+| "我知道那是什麼意思" | 知道概念 ≠ 使用技能。調用它。 |
 
-## Skill Priority
+## 技能優先級
 
-When multiple skills could apply, use this order:
+當多個技能可能適用時，使用以下順序：
 
-1. **Process skills first** (brainstorming, debugging) - these determine HOW to approach the task
-2. **Implementation skills second** (frontend-design, mcp-builder) - these guide execution
+1. **流程技能優先** (brainstorming、debugging) - 這些決定如何處理任務
+2. **實作技能其次** (frontend-design、mcp-builder) - 這些指導執行
 
-"Let's build X" → brainstorming first, then implementation skills.
-"Fix this bug" → debugging first, then domain-specific skills.
+「讓我們構建 X」 → 先 brainstorming，然後實作技能。
+「修復這個 bug」 → 先 debugging，然後特定領域技能。
 
-## Skill Types
+## 技能類型
 
-**Rigid** (TDD, debugging): Follow exactly. Don't adapt away discipline.
+**嚴格型** (TDD、debugging)：完全遵循。不要為了適應而放棄紀律。
 
-**Flexible** (patterns): Adapt principles to context.
+**靈活型** (patterns)：根據背景調整原則。
 
-The skill itself tells you which.
+技能本身會告訴您是哪一種。
 
-## User Instructions
+## 用戶指令
 
-Instructions say WHAT, not HOW. "Add X" or "Fix Y" doesn't mean skip workflows.
+指令說明做什麼，而不是如何做。「添加 X」或「修復 Y」並不意味著跳過工作流程。

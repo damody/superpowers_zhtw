@@ -1,6 +1,6 @@
 #!/bin/bash
-# Run all skill triggering tests
-# Usage: ./run-all.sh
+# 運行所有技能觸發測試
+# 用法: ./run-all.sh
 
 set -e
 

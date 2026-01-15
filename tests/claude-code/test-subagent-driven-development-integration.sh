@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Integration Test: subagent-driven-development workflow
-# Actually executes a plan and verifies the new workflow behaviors
+# 集成測試: 子代理驅動開發工作流程
+# 實際執行計劃並驗證新的工作流程行為
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -21,14 +21,14 @@ echo ""
 echo "WARNING: This test may take 10-30 minutes to complete."
 echo ""
 
-# Create test project
+# 創建測試項目
 TEST_PROJECT=$(create_test_project)
 echo "Test project: $TEST_PROJECT"
 
-# Trap to cleanup
+# 設定陷阱以清理
 trap "cleanup_test_project $TEST_PROJECT" EXIT
 
-# Set up minimal Node.js project
+# 設置最小化的 Node.js 項目
 cd "$TEST_PROJECT"
 
 cat > package.json <<'EOF'
@@ -44,7 +44,7 @@ EOF
 
 mkdir -p src test docs/plans
 
-# Create a simple implementation plan
+# 創建簡單的實現計劃
 cat > docs/plans/implementation-plan.md <<'EOF'
 # Test Implementation Plan
 
@@ -104,7 +104,7 @@ export function multiply(a, b) {
 **Verification:** `npm test`
 EOF
 
-# Initialize git repo
+# 初始化 git 倉庫
 git init --quiet
 git config user.email "test@test.com"
 git config user.name "Test User"
@@ -115,11 +115,11 @@ echo ""
 echo "Project setup complete. Starting execution..."
 echo ""
 
-# Run Claude with subagent-driven-development
-# Capture full output to analyze
+# 使用子代理驅動開發運行 Claude
+# 捕獲完整輸出以進行分析
 OUTPUT_FILE="$TEST_PROJECT/claude-output.txt"
 
-# Create prompt file
+# 創建提示文件
 cat > "$TEST_PROJECT/prompt.txt" <<'EOF'
 I want you to execute the implementation plan at docs/plans/implementation-plan.md using the subagent-driven-development skill.
 
@@ -133,9 +133,9 @@ IMPORTANT: Follow the skill exactly. I will be verifying that you:
 Begin now. Execute the plan.
 EOF
 
-# Note: We use a longer timeout since this is integration testing
-# Use --allowed-tools to enable tool usage in headless mode
-# IMPORTANT: Run from superpowers directory so local dev skills are available
+# 注意: 由於這是集成測試,我們使用更長的超時時間
+# 使用 --allowed-tools 在無頭模式下啟用工具使用
+# 重要: 從 superpowers 目錄運行,以便本地開發技能可用
 PROMPT="Change to directory $TEST_PROJECT and then execute the implementation plan at docs/plans/implementation-plan.md using the subagent-driven-development skill.
 
 IMPORTANT: Follow the skill exactly. I will be verifying that you:
@@ -161,12 +161,12 @@ echo ""
 echo "Execution complete. Analyzing results..."
 echo ""
 
-# Find the session transcript
-# Session files are in ~/.claude/projects/-<working-dir>/<session-id>.jsonl
+# 查找會話記錄
+# 會話文件位於 ~/.claude/projects/-<working-dir>/<session-id>.jsonl
 WORKING_DIR_ESCAPED=$(echo "$SCRIPT_DIR/../.." | sed 's/\//-/g' | sed 's/^-//')
 SESSION_DIR="$HOME/.claude/projects/$WORKING_DIR_ESCAPED"
 
-# Find the most recent session file (created during this test run)
+# 查找最新的會話文件(在此測試運行期間創建)
 SESSION_FILE=$(find "$SESSION_DIR" -name "*.jsonl" -type f -mmin -60 2>/dev/null | sort -r | head -1)
 
 if [ -z "$SESSION_FILE" ]; then
@@ -184,7 +184,7 @@ FAILED=0
 echo "=== Verification Tests ==="
 echo ""
 
-# Test 1: Skill was invoked
+# 測試 1: 技能已被調用
 echo "Test 1: Skill tool invoked..."
 if grep -q '"name":"Skill".*"skill":"superpowers:subagent-driven-development"' "$SESSION_FILE"; then
     echo "  [PASS] subagent-driven-development skill was invoked"
@@ -194,7 +194,7 @@ else
 fi
 echo ""
 
-# Test 2: Subagents were used (Task tool)
+# 測試 2: 使用了子代理(Task 工具)
 echo "Test 2: Subagents dispatched..."
 task_count=$(grep -c '"name":"Task"' "$SESSION_FILE" || echo "0")
 if [ "$task_count" -ge 2 ]; then
@@ -205,7 +205,7 @@ else
 fi
 echo ""
 
-# Test 3: TodoWrite was used for tracking
+# 測試 3: 使用了 TodoWrite 進行追蹤
 echo "Test 3: Task tracking..."
 todo_count=$(grep -c '"name":"TodoWrite"' "$SESSION_FILE" || echo "0")
 if [ "$todo_count" -ge 1 ]; then
@@ -216,7 +216,7 @@ else
 fi
 echo ""
 
-# Test 6: Implementation actually works
+# 測試 6: 實現實際工作
 echo "Test 6: Implementation verification..."
 if [ -f "$TEST_PROJECT/src/math.js" ]; then
     echo "  [PASS] src/math.js created"
@@ -246,7 +246,7 @@ else
     FAILED=$((FAILED + 1))
 fi
 
-# Try running tests
+# 嘗試運行測試
 if cd "$TEST_PROJECT" && npm test > test-output.txt 2>&1; then
     echo "  [PASS] Tests pass"
 else
@@ -256,7 +256,7 @@ else
 fi
 echo ""
 
-# Test 7: Git commits show proper workflow
+# 測試 7: Git 提交顯示正確的工作流程
 echo "Test 7: Git commit history..."
 commit_count=$(git -C "$TEST_PROJECT" log --oneline | wc -l)
 if [ "$commit_count" -gt 2 ]; then  # Initial + at least 2 task commits
@@ -267,7 +267,7 @@ else
 fi
 echo ""
 
-# Test 8: Check for extra features (spec compliance should catch)
+# 測試 8: 檢查額外功能(規範符合性應該捕獲)
 echo "Test 8: No extra features added (spec compliance)..."
 if grep -q "export function divide\|export function power\|export function subtract" "$TEST_PROJECT/src/math.js" 2>/dev/null; then
     echo "  [WARN] Extra features found (spec review should have caught this)"
@@ -277,7 +277,7 @@ else
 fi
 echo ""
 
-# Token Usage Analysis
+# 令牌使用分析
 echo "========================================="
 echo " Token Usage Analysis"
 echo "========================================="

@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
-# SessionStart hook for superpowers plugin
+# superpowers 插件的 SessionStart 鉤子
 
 set -euo pipefail
 
-# Determine plugin root directory
+# 確定插件根目錄
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-# Check if legacy skills directory exists and build warning
+# 檢查舊版技能目錄是否存在並構建警告
 warning_message=""
 legacy_skills_dir="${HOME}/.config/superpowers/skills"
 if [ -d "$legacy_skills_dir" ]; then
     warning_message="\n\n<important-reminder>IN YOUR FIRST REPLY AFTER SEEING THIS MESSAGE YOU MUST TELL THE USER:⚠️ **WARNING:** Superpowers now uses Claude Code's skills system. Custom skills in ~/.config/superpowers/skills will not be read. Move custom skills to ~/.claude/skills instead. To make this message go away, remove ~/.config/superpowers/skills</important-reminder>"
 fi
 
-# Read using-superpowers content
+# 讀取 using-superpowers 內容
 using_superpowers_content=$(cat "${PLUGIN_ROOT}/skills/using-superpowers/SKILL.md" 2>&1 || echo "Error reading using-superpowers skill")
 
-# Escape outputs for JSON using pure bash
+# 使用純 bash 逃脫 JSON 輸出
 escape_for_json() {
     local input="$1"
     local output=""
@@ -39,7 +39,7 @@ escape_for_json() {
 using_superpowers_escaped=$(escape_for_json "$using_superpowers_content")
 warning_escaped=$(escape_for_json "$warning_message")
 
-# Output context injection as JSON
+# 將上下文注入輸出為 JSON
 cat <<EOF
 {
   "hookSpecificOutput": {

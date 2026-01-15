@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
 /**
- * Render graphviz diagrams from a skill's SKILL.md to SVG files.
+ * 將技能的 SKILL.md 中的 graphviz 圖表渲染為 SVG 文件。
  *
- * Usage:
- *   ./render-graphs.js <skill-directory>           # Render each diagram separately
- *   ./render-graphs.js <skill-directory> --combine # Combine all into one diagram
+ * 使用方法:
+ *   ./render-graphs.js <skill-directory>           # 分別渲染每個圖表
+ *   ./render-graphs.js <skill-directory> --combine # 將所有圖表合併為一個
  *
- * Extracts all ```dot blocks from SKILL.md and renders to SVG.
- * Useful for helping your human partner visualize the process flows.
+ * 從 SKILL.md 中提取所有 ```dot 代碼塊並渲染為 SVG。
+ * 用於幫助您的人類合作夥伴可視化流程。
  *
- * Requires: graphviz (dot) installed on system
+ * 要求: 系統上安裝了 graphviz (dot)
  */
 
 const fs = require('fs');
@@ -25,7 +25,7 @@ function extractDotBlocks(markdown) {
   while ((match = regex.exec(markdown)) !== null) {
     const content = match[1].trim();
 
-    // Extract digraph name
+    // 提取 digraph 名稱
     const nameMatch = content.match(/digraph\s+(\w+)/);
     const name = nameMatch ? nameMatch[1] : `graph_${blocks.length + 1}`;
 
@@ -36,13 +36,13 @@ function extractDotBlocks(markdown) {
 }
 
 function extractGraphBody(dotContent) {
-  // Extract just the body (nodes and edges) from a digraph
+  // 從 digraph 中僅提取主體 (節點和邊)
   const match = dotContent.match(/digraph\s+\w+\s*\{([\s\S]*)\}/);
   if (!match) return '';
 
   let body = match[1];
 
-  // Remove rankdir (we'll set it once at the top level)
+  // 移除 rankdir (我們在頂層設置一次)
   body = body.replace(/^\s*rankdir\s*=\s*\w+\s*;?\s*$/gm, '');
 
   return body.trim();
@@ -51,7 +51,7 @@ function extractGraphBody(dotContent) {
 function combineGraphs(blocks, skillName) {
   const bodies = blocks.map((block, i) => {
     const body = extractGraphBody(block.content);
-    // Wrap each subgraph in a cluster for visual grouping
+    // 將每個子圖包裝在一個叢集中以便視覺分組
     return `  subgraph cluster_${i} {
     label="${block.name}";
     ${body.split('\n').map(line => '  ' + line).join('\n')}
@@ -133,7 +133,7 @@ function main() {
   }
 
   if (combine) {
-    // Combine all graphs into one
+    // 將所有圖表合併為一個
     const combined = combineGraphs(blocks, skillName);
     const svg = renderToSvg(combined);
     if (svg) {
@@ -141,7 +141,7 @@ function main() {
       fs.writeFileSync(outputPath, svg);
       console.log(`  Rendered: ${skillName}_combined.svg`);
 
-      // Also write the dot source for debugging
+      // 也寫入 dot 源以用於偵錯
       const dotPath = path.join(outputDir, `${skillName}_combined.dot`);
       fs.writeFileSync(dotPath, combined);
       console.log(`  Source: ${skillName}_combined.dot`);
@@ -149,7 +149,7 @@ function main() {
       console.error('  Failed to render combined diagram');
     }
   } else {
-    // Render each separately
+    // 分別渲染每個圖表
     for (const block of blocks) {
       const svg = renderToSvg(block.content);
       if (svg) {

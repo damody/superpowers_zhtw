@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Test: subagent-driven-development skill
-# Verifies that the skill is loaded and follows correct workflow
+# 測試: 子代理驅動開發技能
+# 驗證該技能已加載並遵循正確的工作流程
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -9,7 +9,7 @@ source "$SCRIPT_DIR/test-helpers.sh"
 echo "=== Test: subagent-driven-development skill ==="
 echo ""
 
-# Test 1: Verify skill can be loaded
+# 測試 1: 驗證技能可以被加載
 echo "Test 1: Skill loading..."
 
 output=$(run_claude "What is the subagent-driven-development skill? Describe its key steps briefly." 30)
@@ -28,7 +28,7 @@ fi
 
 echo ""
 
-# Test 2: Verify skill describes correct workflow order
+# 測試 2: 驗證技能描述了正確的工作流程順序
 echo "Test 2: Workflow ordering..."
 
 output=$(run_claude "In the subagent-driven-development skill, what comes first: spec compliance review or code quality review? Be specific about the order." 30)
@@ -41,7 +41,7 @@ fi
 
 echo ""
 
-# Test 3: Verify self-review is mentioned
+# 測試 3: 驗證提到了自審查
 echo "Test 3: Self-review requirement..."
 
 output=$(run_claude "Does the subagent-driven-development skill require implementers to do self-review? What should they check?" 30)
@@ -60,7 +60,7 @@ fi
 
 echo ""
 
-# Test 4: Verify plan is read once
+# 測試 4: 驗證計劃只讀取一次
 echo "Test 4: Plan reading efficiency..."
 
 output=$(run_claude "In subagent-driven-development, how many times should the controller read the plan file? When does this happen?" 30)
@@ -79,7 +79,7 @@ fi
 
 echo ""
 
-# Test 5: Verify spec compliance reviewer is skeptical
+# 測試 5: 驗證規範符合性審查員的懷疑態度
 echo "Test 5: Spec compliance reviewer mindset..."
 
 output=$(run_claude "What is the spec compliance reviewer's attitude toward the implementer's report in subagent-driven-development?" 30)
@@ -98,7 +98,7 @@ fi
 
 echo ""
 
-# Test 6: Verify review loops
+# 測試 6: 驗證審查循環
 echo "Test 6: Review loop requirements..."
 
 output=$(run_claude "In subagent-driven-development, what happens if a reviewer finds issues? Is it a one-time review or a loop?" 30)
@@ -117,7 +117,7 @@ fi
 
 echo ""
 
-# Test 7: Verify full task text is provided
+# 測試 7: 驗證提供了完整的任務文本
 echo "Test 7: Task context provision..."
 
 output=$(run_claude "In subagent-driven-development, how does the controller provide task information to the implementer subagent? Does it make them read a file or provide it directly?" 30)

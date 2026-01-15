@@ -1,78 +1,78 @@
-# Implementer Subagent Prompt Template
+# 實現者子代理提示範本
 
-Use this template when dispatching an implementer subagent.
+在分派實現者子代理時使用此範本。
 
 ```
-Task tool (general-purpose):
-  description: "Implement Task N: [task name]"
+任務工具 (通用):
+  description: "實現任務 N: [任務名稱]"
   prompt: |
-    You are implementing Task N: [task name]
+    你正在實現任務 N: [任務名稱]
 
-    ## Task Description
+    ## 任務描述
 
-    [FULL TEXT of task from plan - paste it here, don't make subagent read file]
+    [從計劃中完整的任務文本 - 在此粘貼，不要讓子代理讀取文件]
 
-    ## Context
+    ## 背景
 
-    [Scene-setting: where this fits, dependencies, architectural context]
+    [場景設置: 這適合於何處、依賴、架構背景]
 
-    ## Before You Begin
+    ## 開始之前
 
-    If you have questions about:
-    - The requirements or acceptance criteria
-    - The approach or implementation strategy
-    - Dependencies or assumptions
-    - Anything unclear in the task description
+    如果你對以下內容有疑問:
+    - 需求或驗收標準
+    - 方法或實現策略
+    - 依賴或假設
+    - 任務描述中的任何不清楚之處
 
-    **Ask them now.** Raise any concerns before starting work.
+    **現在就提出。** 在開始工作前提出任何關切。
 
-    ## Your Job
+    ## 你的工作
 
-    Once you're clear on requirements:
-    1. Implement exactly what the task specifies
-    2. Write tests (following TDD if task says to)
-    3. Verify implementation works
-    4. Commit your work
-    5. Self-review (see below)
-    6. Report back
+    一旦你清楚了需求:
+    1. 完全實現任務指定的內容
+    2. 編寫測試 (如果任務要求，遵循 TDD)
+    3. 驗證實現有效
+    4. 提交你的工作
+    5. 自我檢查 (見下文)
+    6. 回報
 
-    Work from: [directory]
+    從以下位置工作: [目錄]
 
-    **While you work:** If you encounter something unexpected or unclear, **ask questions**.
-    It's always OK to pause and clarify. Don't guess or make assumptions.
+    **當你工作時:** 如果你遇到意外或不清楚的地方，**提出問題**。
+    暫停和澄清總是可以的。不要猜測或做出假設。
 
-    ## Before Reporting Back: Self-Review
+    ## 報告前: 自我檢查
 
-    Review your work with fresh eyes. Ask yourself:
+    用新鮮的眼光檢查你的工作。問自己:
 
-    **Completeness:**
-    - Did I fully implement everything in the spec?
-    - Did I miss any requirements?
-    - Are there edge cases I didn't handle?
+    **完整性:**
+    - 我是否完全實現了規格中的所有內容?
+    - 我是否遺漏了任何需求?
+    - 有沒有我沒有處理的邊界情況?
 
-    **Quality:**
-    - Is this my best work?
-    - Are names clear and accurate (match what things do, not how they work)?
-    - Is the code clean and maintainable?
+    **質量:**
+    - 這是我最好的工作嗎?
+    - 名字是否清晰和準確 (與事物做什麼匹配，而不是它們如何工作)?
+    - 代碼是否乾淨且可維護?
 
-    **Discipline:**
-    - Did I avoid overbuilding (YAGNI)?
-    - Did I only build what was requested?
-    - Did I follow existing patterns in the codebase?
+    **紀律:**
+    - 我是否避免了過度構建 (YAGNI)?
+    - 我是否只構建了被要求的?
+    - 我是否遵循了代碼庫中的現有模式?
 
-    **Testing:**
-    - Do tests actually verify behavior (not just mock behavior)?
-    - Did I follow TDD if required?
-    - Are tests comprehensive?
+    **測試:**
+    - 測試是否真正驗證行為 (而不僅僅是 mock 行為)?
+    - 如果需要，我是否遵循了 TDD?
+    - 測試是否全面?
 
-    If you find issues during self-review, fix them now before reporting.
+    如果在自我檢查期間發現問題，在報告前修正。
 
-    ## Report Format
+    ## 報告格式
 
-    When done, report:
-    - What you implemented
-    - What you tested and test results
-    - Files changed
-    - Self-review findings (if any)
-    - Any issues or concerns
+    完成後，報告:
+    - 你實現了什麼
+    - 你測試了什麼和測試結果
+    - 更改的文件
+    - 自我檢查發現 (如有)
+    - 任何問題或關切
 ```

@@ -1,34 +1,34 @@
 #!/usr/bin/env bash
-# Setup script for OpenCode plugin tests
-# Creates an isolated test environment with proper plugin installation
+# OpenCode 插件測試的設置腳本
+# 創建具有正確插件安裝的隔離測試環境
 set -euo pipefail
 
-# Get the repository root (two levels up from tests/opencode/)
+# 獲取倉庫根目錄(從 tests/opencode/ 上兩層)
 REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
-# Create temp home directory for isolation
+# 創建臨時主目錄以進行隔離
 export TEST_HOME=$(mktemp -d)
 export HOME="$TEST_HOME"
 export XDG_CONFIG_HOME="$TEST_HOME/.config"
 export OPENCODE_CONFIG_DIR="$TEST_HOME/.config/opencode"
 
-# Install plugin to test location
+# 將插件安裝到測試位置
 mkdir -p "$HOME/.config/opencode/superpowers"
 cp -r "$REPO_ROOT/lib" "$HOME/.config/opencode/superpowers/"
 cp -r "$REPO_ROOT/skills" "$HOME/.config/opencode/superpowers/"
 
-# Copy plugin directory
+# 複製插件目錄
 mkdir -p "$HOME/.config/opencode/superpowers/.opencode/plugin"
 cp "$REPO_ROOT/.opencode/plugin/superpowers.js" "$HOME/.config/opencode/superpowers/.opencode/plugin/"
 
-# Register plugin via symlink
+# 通過符號鏈接註冊插件
 mkdir -p "$HOME/.config/opencode/plugin"
 ln -sf "$HOME/.config/opencode/superpowers/.opencode/plugin/superpowers.js" \
        "$HOME/.config/opencode/plugin/superpowers.js"
 
-# Create test skills in different locations for testing
+# 在不同位置創建測試技能以進行測試
 
-# Personal test skill
+# 個人測試技能
 mkdir -p "$HOME/.config/opencode/skills/personal-test"
 cat > "$HOME/.config/opencode/skills/personal-test/SKILL.md" <<'EOF'
 ---
@@ -42,7 +42,7 @@ This is a personal skill used for testing.
 PERSONAL_SKILL_MARKER_12345
 EOF
 
-# Create a project directory for project-level skill tests
+# 為項目級技能測試創建項目目錄
 mkdir -p "$TEST_HOME/test-project/.opencode/skills/project-test"
 cat > "$TEST_HOME/test-project/.opencode/skills/project-test/SKILL.md" <<'EOF'
 ---
@@ -61,13 +61,13 @@ echo "Plugin installed to: $HOME/.config/opencode/superpowers/.opencode/plugin/s
 echo "Plugin registered at: $HOME/.config/opencode/plugin/superpowers.js"
 echo "Test project at: $TEST_HOME/test-project"
 
-# Helper function for cleanup (call from tests or trap)
+# 清理的輔助函數(從測試或陷阱調用)
 cleanup_test_env() {
     if [ -n "${TEST_HOME:-}" ] && [ -d "$TEST_HOME" ]; then
         rm -rf "$TEST_HOME"
     fi
 }
 
-# Export for use in tests
+# 導出以在測試中使用
 export -f cleanup_test_env
 export REPO_ROOT

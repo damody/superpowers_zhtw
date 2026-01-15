@@ -1,24 +1,24 @@
-# OpenCode Support Implementation Plan
+# OpenCode 支持實現計劃
 
-> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+> **對於 Claude：** 需要的子技能：使用 superpowers:executing-plans 逐任務實現此計劃。
 
-**Goal:** Add full superpowers support for OpenCode.ai with a native JavaScript plugin that shares core functionality with the existing Codex implementation.
+**目標：** 為 OpenCode.ai 添加完整的 superpowers 支持，使用原生 JavaScript 插件，與現有 Codex 實現共享核心功能。
 
-**Architecture:** Extract common skill discovery/parsing logic into `lib/skills-core.js`, refactor Codex to use it, then build OpenCode plugin using their native plugin API with custom tools and session hooks.
+**架構：** 將常見的技能發現/解析邏輯提取到 `lib/skills-core.js`，重構 Codex 使用它，然後使用其原生插件 API 與自定義工具和會話鉤子構建 OpenCode 插件。
 
-**Tech Stack:** Node.js, JavaScript, OpenCode Plugin API, Git worktrees
+**技術棧：** Node.js、JavaScript、OpenCode 插件 API、Git worktrees
 
 ---
 
-## Phase 1: Create Shared Core Module
+## 階段 1：創建共享核心模塊
 
-### Task 1: Extract Frontmatter Parsing
+### 任務 1：提取 Frontmatter 解析
 
-**Files:**
-- Create: `lib/skills-core.js`
-- Reference: `.codex/superpowers-codex` (lines 40-74)
+**文件：**
+- 創建：`lib/skills-core.js`
+- 參考：`.codex/superpowers-codex` (第 40-74 行)
 
-**Step 1: Create lib/skills-core.js with extractFrontmatter function**
+**步驟 1：使用 extractFrontmatter 函數創建 lib/skills-core.js**
 
 ```javascript
 #!/usr/bin/env node
@@ -27,14 +27,14 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * Extract YAML frontmatter from a skill file.
- * Current format:
+ * 從技能文件中提取 YAML frontmatter。
+ * 當前格式：
  * ---
  * name: skill-name
  * description: Use when [condition] - [what it does]
  * ---
  *
- * @param {string} filePath - Path to SKILL.md file
+ * @param {string} filePath - 指向 SKILL.md 文件的路徑
  * @returns {{name: string, description: string}}
  */
 function extractFrontmatter(filePath) {
@@ -80,12 +80,12 @@ module.exports = {
 };
 ```
 
-**Step 2: Verify file was created**
+**步驟 2：驗證文件已創建**
 
-Run: `ls -l lib/skills-core.js`
-Expected: File exists
+運行：`ls -l lib/skills-core.js`
+預期：文件存在
 
-**Step 3: Commit**
+**步驟 3：提交**
 
 ```bash
 git add lib/skills-core.js
@@ -94,23 +94,23 @@ git commit -m "feat: create shared skills core module with frontmatter parser"
 
 ---
 
-### Task 2: Extract Skill Discovery Logic
+### 任務 2：提取技能發現邏輯
 
-**Files:**
-- Modify: `lib/skills-core.js`
-- Reference: `.codex/superpowers-codex` (lines 97-136)
+**文件：**
+- 修改：`lib/skills-core.js`
+- 參考：`.codex/superpowers-codex` (第 97-136 行)
 
-**Step 1: Add findSkillsInDir function to skills-core.js**
+**步驟 1：向 skills-core.js 添加 findSkillsInDir 函數**
 
-Add before `module.exports`:
+在 `module.exports` 之前添加：
 
 ```javascript
 /**
- * Find all SKILL.md files in a directory recursively.
+ * 遞歸地在目錄中找到所有 SKILL.md 文件。
  *
- * @param {string} dir - Directory to search
- * @param {string} sourceType - 'personal' or 'superpowers' for namespacing
- * @param {number} maxDepth - Maximum recursion depth (default: 3)
+ * @param {string} dir - 要搜索的目錄
+ * @param {string} sourceType - 命名空間用的「個人」或「superpowers」
+ * @param {number} maxDepth - 最大遞歸深度（默認：3）
  * @returns {Array<{path: string, name: string, description: string, sourceType: string}>}
  */
 function findSkillsInDir(dir, sourceType, maxDepth = 3) {
@@ -127,7 +127,7 @@ function findSkillsInDir(dir, sourceType, maxDepth = 3) {
             const fullPath = path.join(currentDir, entry.name);
 
             if (entry.isDirectory()) {
-                // Check for SKILL.md in this directory
+                // 檢查此目錄中是否有 SKILL.md
                 const skillFile = path.join(fullPath, 'SKILL.md');
                 if (fs.existsSync(skillFile)) {
                     const { name, description } = extractFrontmatter(skillFile);
@@ -140,7 +140,7 @@ function findSkillsInDir(dir, sourceType, maxDepth = 3) {
                     });
                 }
 
-                // Recurse into subdirectories
+                // 遞歸進入子目錄
                 recurse(fullPath, depth + 1);
             }
         }
@@ -151,9 +151,9 @@ function findSkillsInDir(dir, sourceType, maxDepth = 3) {
 }
 ```
 
-**Step 2: Update module.exports**
+**步驟 2：更新 module.exports**
 
-Replace the exports line with:
+用以下代碼替換 exports 行：
 
 ```javascript
 module.exports = {
@@ -162,12 +162,12 @@ module.exports = {
 };
 ```
 
-**Step 3: Verify syntax**
+**步驟 3：驗證語法**
 
-Run: `node -c lib/skills-core.js`
-Expected: No output (success)
+運行：`node -c lib/skills-core.js`
+預期：無輸出（成功）
 
-**Step 4: Commit**
+**步驟 4：提交**
 
 ```bash
 git add lib/skills-core.js
@@ -176,32 +176,32 @@ git commit -m "feat: add skill discovery function to core module"
 
 ---
 
-### Task 3: Extract Skill Resolution Logic
+### 任務 3：提取技能解決邏輯
 
-**Files:**
-- Modify: `lib/skills-core.js`
-- Reference: `.codex/superpowers-codex` (lines 212-280)
+**文件：**
+- 修改：`lib/skills-core.js`
+- 參考：`.codex/superpowers-codex` (第 212-280 行)
 
-**Step 1: Add resolveSkillPath function**
+**步驟 1：添加 resolveSkillPath 函數**
 
-Add before `module.exports`:
+在 `module.exports` 之前添加：
 
 ```javascript
 /**
- * Resolve a skill name to its file path, handling shadowing
- * (personal skills override superpowers skills).
+ * 將技能名稱解決為其文件路徑，處理遮蔽
+ * （個人技能覆蓋 superpowers 技能）。
  *
- * @param {string} skillName - Name like "superpowers:brainstorming" or "my-skill"
- * @param {string} superpowersDir - Path to superpowers skills directory
- * @param {string} personalDir - Path to personal skills directory
+ * @param {string} skillName - 名稱如「superpowers:brainstorming」或「my-skill」
+ * @param {string} superpowersDir - 指向 superpowers 技能目錄的路徑
+ * @param {string} personalDir - 指向個人技能目錄的路徑
  * @returns {{skillFile: string, sourceType: string, skillPath: string} | null}
  */
 function resolveSkillPath(skillName, superpowersDir, personalDir) {
-    // Strip superpowers: prefix if present
+    // 如果存在則刪除 superpowers: 前綴
     const forceSuperpowers = skillName.startsWith('superpowers:');
     const actualSkillName = forceSuperpowers ? skillName.replace(/^superpowers:/, '') : skillName;
 
-    // Try personal skills first (unless explicitly superpowers:)
+    // 首先嘗試個人技能（除非明確 superpowers:）
     if (!forceSuperpowers && personalDir) {
         const personalPath = path.join(personalDir, actualSkillName);
         const personalSkillFile = path.join(personalPath, 'SKILL.md');
@@ -214,7 +214,7 @@ function resolveSkillPath(skillName, superpowersDir, personalDir) {
         }
     }
 
-    // Try superpowers skills
+    // 嘗試 superpowers 技能
     if (superpowersDir) {
         const superpowersPath = path.join(superpowersDir, actualSkillName);
         const superpowersSkillFile = path.join(superpowersPath, 'SKILL.md');
@@ -231,7 +231,7 @@ function resolveSkillPath(skillName, superpowersDir, personalDir) {
 }
 ```
 
-**Step 2: Update module.exports**
+**步驟 2：更新 module.exports**
 
 ```javascript
 module.exports = {
@@ -241,12 +241,12 @@ module.exports = {
 };
 ```
 
-**Step 3: Verify syntax**
+**步驟 3：驗證語法**
 
-Run: `node -c lib/skills-core.js`
-Expected: No output
+運行：`node -c lib/skills-core.js`
+預期：無輸出
 
-**Step 4: Commit**
+**步驟 4：提交**
 
 ```bash
 git add lib/skills-core.js
@@ -255,32 +255,32 @@ git commit -m "feat: add skill path resolution with shadowing support"
 
 ---
 
-### Task 4: Extract Update Check Logic
+### 任務 4：提取更新檢查邏輯
 
-**Files:**
-- Modify: `lib/skills-core.js`
-- Reference: `.codex/superpowers-codex` (lines 16-38)
+**文件：**
+- 修改：`lib/skills-core.js`
+- 參考：`.codex/superpowers-codex` (第 16-38 行)
 
-**Step 1: Add checkForUpdates function**
+**步驟 1：在 requires 後添加 checkForUpdates 函數**
 
-Add at top after requires:
+在頂部 requires 後添加：
 
 ```javascript
 const { execSync } = require('child_process');
 ```
 
-Add before `module.exports`:
+在 `module.exports` 之前添加：
 
 ```javascript
 /**
- * Check if a git repository has updates available.
+ * 檢查 git 倉庫是否有可用的更新。
  *
- * @param {string} repoDir - Path to git repository
- * @returns {boolean} - True if updates are available
+ * @param {string} repoDir - 指向 git 倉庫的路徑
+ * @returns {boolean} - 如果有可用的更新為 true
  */
 function checkForUpdates(repoDir) {
     try {
-        // Quick check with 3 second timeout to avoid delays if network is down
+        // 快速檢查，3 秒超時以避免網絡掉線時延遲
         const output = execSync('git fetch origin && git status --porcelain=v1 --branch', {
             cwd: repoDir,
             timeout: 3000,
@@ -288,22 +288,22 @@ function checkForUpdates(repoDir) {
             stdio: 'pipe'
         });
 
-        // Parse git status output to see if we're behind
+        // 解析 git status 輸出看我們是否落後
         const statusLines = output.split('\n');
         for (const line of statusLines) {
             if (line.startsWith('## ') && line.includes('[behind ')) {
-                return true; // We're behind remote
+                return true; // 我們落後於遠程
             }
         }
-        return false; // Up to date
+        return false; // 最新
     } catch (error) {
-        // Network down, git error, timeout, etc. - don't block bootstrap
+        // 網絡斷開、git 錯誤、超時等 - 不阻塞引導程序
         return false;
     }
 }
 ```
 
-**Step 2: Update module.exports**
+**步驟 2：更新 module.exports**
 
 ```javascript
 module.exports = {
@@ -314,12 +314,12 @@ module.exports = {
 };
 ```
 
-**Step 3: Verify syntax**
+**步驟 3：驗證語法**
 
-Run: `node -c lib/skills-core.js`
-Expected: No output
+運行：`node -c lib/skills-core.js`
+預期：無輸出
 
-**Step 4: Commit**
+**步驟 4：提交**
 
 ```bash
 git add lib/skills-core.js
@@ -328,27 +328,27 @@ git commit -m "feat: add git update checking to core module"
 
 ---
 
-## Phase 2: Refactor Codex to Use Shared Core
+## 階段 2：重構 Codex 以使用共享核心
 
-### Task 5: Update Codex to Import Shared Core
+### 任務 5：更新 Codex 以導入共享核心
 
-**Files:**
-- Modify: `.codex/superpowers-codex` (add import at top)
+**文件：**
+- 修改：`.codex/superpowers-codex` (在文件頂部添加導入)
 
-**Step 1: Add import statement**
+**步驟 1：添加導入語句**
 
-After the existing requires at top of file (around line 6), add:
+在現有 requires 之後（大約第 6 行），添加：
 
 ```javascript
 const skillsCore = require('../lib/skills-core');
 ```
 
-**Step 2: Verify syntax**
+**步驟 2：驗證語法**
 
-Run: `node -c .codex/superpowers-codex`
-Expected: No output
+運行：`node -c .codex/superpowers-codex`
+預期：無輸出
 
-**Step 3: Commit**
+**步驟 3：提交**
 
 ```bash
 git add .codex/superpowers-codex
@@ -357,27 +357,27 @@ git commit -m "refactor: import shared skills core in codex"
 
 ---
 
-### Task 6: Replace extractFrontmatter with Core Version
+### 任務 6：用核心版本替換 extractFrontmatter
 
-**Files:**
-- Modify: `.codex/superpowers-codex` (lines 40-74)
+**文件：**
+- 修改：`.codex/superpowers-codex` (第 40-74 行)
 
-**Step 1: Remove local extractFrontmatter function**
+**步驟 1：移除本地 extractFrontmatter 函數**
 
-Delete lines 40-74 (the entire extractFrontmatter function definition).
+刪除第 40-74 行（整個 extractFrontmatter 函數定義）。
 
-**Step 2: Update all extractFrontmatter calls**
+**步驟 2：更新所有 extractFrontmatter 調用**
 
-Find and replace all calls from `extractFrontmatter(` to `skillsCore.extractFrontmatter(`
+找到並用 `skillsCore.extractFrontmatter(` 替換所有 `extractFrontmatter(` 調用
 
-Affected lines approximately: 90, 310
+受影響的行大約：90、310
 
-**Step 3: Verify script still works**
+**步驟 3：驗證腳本仍然工作**
 
-Run: `.codex/superpowers-codex find-skills | head -20`
-Expected: Shows list of skills
+運行：`.codex/superpowers-codex find-skills | head -20`
+預期：顯示技能清單
 
-**Step 4: Commit**
+**步驟 4：提交**
 
 ```bash
 git add .codex/superpowers-codex
@@ -386,25 +386,25 @@ git commit -m "refactor: use shared extractFrontmatter in codex"
 
 ---
 
-### Task 7: Replace findSkillsInDir with Core Version
+### 任務 7：用核心版本替換 findSkillsInDir
 
-**Files:**
-- Modify: `.codex/superpowers-codex` (lines 97-136, approximately)
+**文件：**
+- 修改：`.codex/superpowers-codex` (第 97-136 行，大約)
 
-**Step 1: Remove local findSkillsInDir function**
+**步驟 1：移除本地 findSkillsInDir 函數**
 
-Delete the entire `findSkillsInDir` function definition (approximately lines 97-136).
+刪除整個 `findSkillsInDir` 函數定義（大約第 97-136 行）。
 
-**Step 2: Update all findSkillsInDir calls**
+**步驟 2：更新所有 findSkillsInDir 調用**
 
-Replace calls from `findSkillsInDir(` to `skillsCore.findSkillsInDir(`
+用 `skillsCore.findSkillsInDir(` 替換 `findSkillsInDir(` 的調用
 
-**Step 3: Verify script still works**
+**步驟 3：驗證腳本仍然工作**
 
-Run: `.codex/superpowers-codex find-skills | head -20`
-Expected: Shows list of skills
+運行：`.codex/superpowers-codex find-skills | head -20`
+預期：顯示技能清單
 
-**Step 4: Commit**
+**步驟 4：提交**
 
 ```bash
 git add .codex/superpowers-codex
@@ -413,25 +413,25 @@ git commit -m "refactor: use shared findSkillsInDir in codex"
 
 ---
 
-### Task 8: Replace checkForUpdates with Core Version
+### 任務 8：用核心版本替換 checkForUpdates
 
-**Files:**
-- Modify: `.codex/superpowers-codex` (lines 16-38, approximately)
+**文件：**
+- 修改：`.codex/superpowers-codex` (第 16-38 行，大約)
 
-**Step 1: Remove local checkForUpdates function**
+**步驟 1：移除本地 checkForUpdates 函數**
 
-Delete the entire `checkForUpdates` function definition.
+刪除整個 `checkForUpdates` 函數定義。
 
-**Step 2: Update all checkForUpdates calls**
+**步驟 2：更新所有 checkForUpdates 調用**
 
-Replace calls from `checkForUpdates(` to `skillsCore.checkForUpdates(`
+用 `skillsCore.checkForUpdates(` 替換 `checkForUpdates(` 的調用
 
-**Step 3: Verify script still works**
+**步驟 3：驗證腳本仍然工作**
 
-Run: `.codex/superpowers-codex bootstrap | head -50`
-Expected: Shows bootstrap content
+運行：`.codex/superpowers-codex bootstrap | head -50`
+預期：顯示引導程序內容
 
-**Step 4: Commit**
+**步驟 4：提交**
 
 ```bash
 git add .codex/superpowers-codex
@@ -440,27 +440,27 @@ git commit -m "refactor: use shared checkForUpdates in codex"
 
 ---
 
-## Phase 3: Build OpenCode Plugin
+## 階段 3：構建 OpenCode 插件
 
-### Task 9: Create OpenCode Plugin Directory Structure
+### 任務 9：創建 OpenCode 插件目錄結構
 
-**Files:**
-- Create: `.opencode/plugin/superpowers.js`
+**文件：**
+- 創建：`.opencode/plugin/superpowers.js`
 
-**Step 1: Create directory**
+**步驟 1：創建目錄**
 
-Run: `mkdir -p .opencode/plugin`
+運行：`mkdir -p .opencode/plugin`
 
-**Step 2: Create basic plugin file**
+**步驟 2：創建基本插件文件**
 
 ```javascript
 #!/usr/bin/env node
 
 /**
- * Superpowers plugin for OpenCode.ai
+ * OpenCode.ai 的 Superpowers 插件
  *
- * Provides custom tools for loading and discovering skills,
- * with automatic bootstrap on session start.
+ * 提供自定義工具以加載和發現技能，
+ * 具有會話啟動時的自動引導程序。
  */
 
 const skillsCore = require('../../lib/skills-core');
@@ -473,21 +473,21 @@ const superpowersSkillsDir = path.join(homeDir, '.config/opencode/superpowers/sk
 const personalSkillsDir = path.join(homeDir, '.config/opencode/skills');
 
 /**
- * OpenCode plugin entry point
+ * OpenCode 插件進入點
  */
 export const SuperpowersPlugin = async ({ project, client, $, directory, worktree }) => {
   return {
-    // Custom tools and hooks will go here
+    // 自定義工具和鉤子將放在這裡
   };
 };
 ```
 
-**Step 3: Verify file was created**
+**步驟 3：驗證文件已創建**
 
-Run: `ls -l .opencode/plugin/superpowers.js`
-Expected: File exists
+運行：`ls -l .opencode/plugin/superpowers.js`
+預期：文件存在
 
-**Step 4: Commit**
+**步驟 4：提交**
 
 ```bash
 git add .opencode/plugin/superpowers.js
@@ -496,18 +496,18 @@ git commit -m "feat: create opencode plugin scaffold"
 
 ---
 
-### Task 10: Implement use_skill Tool
+### 任務 10：實現 use_skill 工具
 
-**Files:**
-- Modify: `.opencode/plugin/superpowers.js`
+**文件：**
+- 修改：`.opencode/plugin/superpowers.js`
 
-**Step 1: Add use_skill tool implementation**
+**步驟 1：添加 use_skill 工具實現**
 
-Replace the plugin return statement with:
+用以下代碼替換插件返回語句：
 
 ```javascript
 export const SuperpowersPlugin = async ({ project, client, $, directory, worktree }) => {
-  // Import zod for schema validation
+  // 導入 zod 用於架構驗證
   const { z } = await import('zod');
 
   return {
@@ -519,7 +519,7 @@ export const SuperpowersPlugin = async ({ project, client, $, directory, worktre
           skill_name: z.string().describe('Name of the skill to load (e.g., "superpowers:brainstorming" or "my-custom-skill")')
         }),
         execute: async ({ skill_name }) => {
-          // Resolve skill path (handles shadowing: personal > superpowers)
+          // 解決技能路徑（處理遮蔽：個人 > superpowers）
           const resolved = skillsCore.resolveSkillPath(
             skill_name,
             superpowersSkillsDir,
@@ -527,14 +527,14 @@ export const SuperpowersPlugin = async ({ project, client, $, directory, worktre
           );
 
           if (!resolved) {
-            return `Error: Skill "${skill_name}" not found.\n\nRun find_skills to see available skills.`;
+            return `錯誤：技能「${skill_name}」未找到。\n\n運行 find_skills 查看可用技能。`;
           }
 
-          // Read skill content
+          // 讀取技能內容
           const fullContent = fs.readFileSync(resolved.skillFile, 'utf8');
           const { name, description } = skillsCore.extractFrontmatter(resolved.skillFile);
 
-          // Extract content after frontmatter
+          // 提取 frontmatter 後的內容
           const lines = fullContent.split('\n');
           let inFrontmatter = false;
           let frontmatterEnded = false;
@@ -558,10 +558,10 @@ export const SuperpowersPlugin = async ({ project, client, $, directory, worktre
           const content = contentLines.join('\n').trim();
           const skillDirectory = path.dirname(resolved.skillFile);
 
-          // Format output similar to Claude Code's Skill tool
+          // 格式化輸出類似於 Claude Code 的技能工具
           return `# ${name || skill_name}
 # ${description || ''}
-# Supporting tools and docs are in ${skillDirectory}
+# 支持工具和文檔在 ${skillDirectory}
 # ============================================
 
 ${content}`;
@@ -572,12 +572,12 @@ ${content}`;
 };
 ```
 
-**Step 2: Verify syntax**
+**步驟 2：驗證語法**
 
-Run: `node -c .opencode/plugin/superpowers.js`
-Expected: No output
+運行：`node -c .opencode/plugin/superpowers.js`
+預期：無輸出
 
-**Step 3: Commit**
+**步驟 3：提交**
 
 ```bash
 git add .opencode/plugin/superpowers.js
@@ -586,14 +586,14 @@ git commit -m "feat: implement use_skill tool for opencode"
 
 ---
 
-### Task 11: Implement find_skills Tool
+### 任務 11：實現 find_skills 工具
 
-**Files:**
-- Modify: `.opencode/plugin/superpowers.js`
+**文件：**
+- 修改：`.opencode/plugin/superpowers.js`
 
-**Step 1: Add find_skills tool to tools array**
+**步驟 1：向工具陣列添加 find_skills 工具**
 
-Add after the use_skill tool definition, before closing the tools array:
+在 use_skill 工具定義後，在關閉工具陣列前添加：
 
 ```javascript
       {
@@ -601,7 +601,7 @@ Add after the use_skill tool definition, before closing the tools array:
         description: 'List all available skills in the superpowers and personal skill libraries.',
         schema: z.object({}),
         execute: async () => {
-          // Find skills in both directories
+          // 在兩個目錄中找到技能
           const superpowersSkills = skillsCore.findSkillsInDir(
             superpowersSkillsDir,
             'superpowers',
@@ -613,14 +613,14 @@ Add after the use_skill tool definition, before closing the tools array:
             3
           );
 
-          // Combine and format skills list
+          // 合併並格式化技能清單
           const allSkills = [...personalSkills, ...superpowersSkills];
 
           if (allSkills.length === 0) {
-            return 'No skills found. Install superpowers skills to ~/.config/opencode/superpowers/skills/';
+            return '未找到技能。將 superpowers 技能安裝到 ~/.config/opencode/superpowers/skills/';
           }
 
-          let output = 'Available skills:\n\n';
+          let output = '可用技能：\n\n';
 
           for (const skill of allSkills) {
             const namespace = skill.sourceType === 'personal' ? '' : 'superpowers:';
@@ -630,7 +630,7 @@ Add after the use_skill tool definition, before closing the tools array:
             if (skill.description) {
               output += `  ${skill.description}\n`;
             }
-            output += `  Directory: ${skill.path}\n\n`;
+            output += `  目錄：${skill.path}\n\n`;
           }
 
           return output;
@@ -638,12 +638,12 @@ Add after the use_skill tool definition, before closing the tools array:
       }
 ```
 
-**Step 2: Verify syntax**
+**步驟 2：驗證語法**
 
-Run: `node -c .opencode/plugin/superpowers.js`
-Expected: No output
+運行：`node -c .opencode/plugin/superpowers.js`
+預期：無輸出
 
-**Step 3: Commit**
+**步驟 3：提交**
 
 ```bash
 git add .opencode/plugin/superpowers.js
@@ -652,18 +652,18 @@ git commit -m "feat: implement find_skills tool for opencode"
 
 ---
 
-### Task 12: Implement Session Start Hook
+### 任務 12：實現會話啟動鉤子
 
-**Files:**
-- Modify: `.opencode/plugin/superpowers.js`
+**文件：**
+- 修改：`.opencode/plugin/superpowers.js`
 
-**Step 1: Add session.started hook**
+**步驟 1：添加 session.started 鉤子**
 
-After the tools array, add:
+在工具陣列後添加：
 
 ```javascript
     'session.started': async () => {
-      // Read using-superpowers skill content
+      // 讀取 using-superpowers 技能內容
       const usingSuperpowersPath = skillsCore.resolveSkillPath(
         'using-superpowers',
         superpowersSkillsDir,
@@ -673,7 +673,7 @@ After the tools array, add:
       let usingSuperpowersContent = '';
       if (usingSuperpowersPath) {
         const fullContent = fs.readFileSync(usingSuperpowersPath.skillFile, 'utf8');
-        // Strip frontmatter
+        // 去掉 frontmatter
         const lines = fullContent.split('\n');
         let inFrontmatter = false;
         let frontmatterEnded = false;
@@ -697,56 +697,56 @@ After the tools array, add:
         usingSuperpowersContent = contentLines.join('\n').trim();
       }
 
-      // Tool mapping instructions
+      // 工具映射說明
       const toolMapping = `
-**Tool Mapping for OpenCode:**
-When skills reference tools you don't have, substitute OpenCode equivalents:
-- \`TodoWrite\` → \`update_plan\` (your planning/task tracking tool)
-- \`Task\` tool with subagents → Use OpenCode's subagent system (@mention syntax or automatic dispatch)
-- \`Skill\` tool → \`use_skill\` custom tool (already available)
-- \`Read\`, \`Write\`, \`Edit\`, \`Bash\` → Use your native tools
+**OpenCode 的工具映射：**
+當技能引用你沒有的工具時，替換為 OpenCode 等價物：
+- \`TodoWrite\` → \`update_plan\`（你的計劃/任務跟蹤工具）
+- \`Task\` 工具帶 subagents → 使用 OpenCode 的 subagent 系統（@mention 語法或自動派遣）
+- \`Skill\` 工具 → \`use_skill\` 自定義工具（已可用）
+- \`Read\`、\`Write\`、\`Edit\`、\`Bash\` → 使用你的原生工具
 
-**Skill directories contain supporting files:**
-- Scripts you can run with bash tool
-- Additional documentation you can read
-- Utilities and helpers specific to that skill
+**技能目錄包含支持文件：**
+- 可以用 bash 工具運行的腳本
+- 可以讀取的額外文檔
+- 特定於該技能的實用程序和幫助程序
 
-**Skills naming:**
-- Superpowers skills: \`superpowers:skill-name\` (from ~/.config/opencode/superpowers/skills/)
-- Personal skills: \`skill-name\` (from ~/.config/opencode/skills/)
-- Personal skills override superpowers skills when names match
+**技能命名：**
+- Superpowers 技能：\`superpowers:skill-name\`（來自 ~/.config/opencode/superpowers/skills/）
+- 個人技能：\`skill-name\`（來自 ~/.config/opencode/skills/）
+- 個人技能在名稱匹配時覆蓋 superpowers 技能
 `;
 
-      // Check for updates (non-blocking)
+      // 檢查更新（非阻塞）
       const hasUpdates = skillsCore.checkForUpdates(
         path.join(homeDir, '.config/opencode/superpowers')
       );
 
       const updateNotice = hasUpdates ?
-        '\n\n⚠️ **Updates available!** Run `cd ~/.config/opencode/superpowers && git pull` to update superpowers.' :
+        '\n\n⚠️ **有可用的更新！** 運行 \`cd ~/.config/opencode/superpowers && git pull\` 以更新 superpowers。' :
         '';
 
-      // Return context to inject into session
+      // 返回要注入到會話中的上下文
       return {
-        context: `<EXTREMELY_IMPORTANT>
-You have superpowers.
+        context: `<極度重要>
+你有 superpowers。
 
-**Below is the full content of your 'superpowers:using-superpowers' skill - your introduction to using skills. For all other skills, use the 'use_skill' tool:**
+**下面是你的「superpowers:using-superpowers」技能的完整內容 - 你使用技能的介紹。對於所有其他技能，使用「use_skill」工具：**
 
 ${usingSuperpowersContent}
 
 ${toolMapping}${updateNotice}
-</EXTREMELY_IMPORTANT>`
+</極度重要>`
       };
     }
 ```
 
-**Step 2: Verify syntax**
+**步驟 2：驗證語法**
 
-Run: `node -c .opencode/plugin/superpowers.js`
-Expected: No output
+運行：`node -c .opencode/plugin/superpowers.js`
+預期：無輸出
 
-**Step 3: Commit**
+**步驟 3：提交**
 
 ```bash
 git add .opencode/plugin/superpowers.js
@@ -755,139 +755,139 @@ git commit -m "feat: implement session.started hook for opencode"
 
 ---
 
-## Phase 4: Documentation
+## 階段 4：文檔
 
-### Task 13: Create OpenCode Installation Guide
+### 任務 13：創建 OpenCode 安裝指南
 
-**Files:**
-- Create: `.opencode/INSTALL.md`
+**文件：**
+- 創建：`.opencode/INSTALL.md`
 
-**Step 1: Create installation guide**
+**步驟 1：創建安裝指南**
 
 ```markdown
-# Installing Superpowers for OpenCode
+# 為 OpenCode 安裝 Superpowers
 
-## Prerequisites
+## 前置條件
 
-- [OpenCode.ai](https://opencode.ai) installed
-- Node.js installed
-- Git installed
+- [OpenCode.ai](https://opencode.ai) 已安裝
+- Node.js 已安裝
+- Git 已安裝
 
-## Installation Steps
+## 安裝步驟
 
-### 1. Install Superpowers Skills
+### 1. 安裝 Superpowers 技能
 
-```bash
-# Clone superpowers skills to OpenCode config directory
+\`\`\`bash
+# 將 superpowers 技能克隆到 OpenCode 配置目錄
 mkdir -p ~/.config/opencode/superpowers
 git clone https://github.com/obra/superpowers.git ~/.config/opencode/superpowers
-```
+\`\`\`
 
-### 2. Install the Plugin
+### 2. 安裝插件
 
-The plugin is included in the superpowers repository you just cloned.
+你剛克隆的 superpowers 倉庫中包含該插件。
 
-OpenCode will automatically discover it from:
-- `~/.config/opencode/superpowers/.opencode/plugin/superpowers.js`
+OpenCode 將自動從以下位置發現它：
+- \`~/.config/opencode/superpowers/.opencode/plugin/superpowers.js\`
 
-Or you can link it to the project-local plugin directory:
+或者你可以將其鏈接到項目本地插件目錄：
 
-```bash
-# In your OpenCode project
+\`\`\`bash
+# 在你的 OpenCode 項目中
 mkdir -p .opencode/plugin
 ln -s ~/.config/opencode/superpowers/.opencode/plugin/superpowers.js .opencode/plugin/superpowers.js
-```
+\`\`\`
 
-### 3. Restart OpenCode
+### 3. 重新啟動 OpenCode
 
-Restart OpenCode to load the plugin. On the next session, you should see:
+重新啟動 OpenCode 以加載插件。在下一個會話中，你應該看到：
 
-```
-You have superpowers.
-```
+\`\`\`
+你有 superpowers。
+\`\`\`
 
-## Usage
+## 使用
 
-### Finding Skills
+### 查找技能
 
-Use the `find_skills` tool to list all available skills:
+使用 \`find_skills\` 工具列出所有可用的技能：
 
-```
-use find_skills tool
-```
+\`\`\`
+使用 find_skills 工具
+\`\`\`
 
-### Loading a Skill
+### 加載技能
 
-Use the `use_skill` tool to load a specific skill:
+使用 \`use_skill\` 工具加載特定技能：
 
-```
-use use_skill tool with skill_name: "superpowers:brainstorming"
-```
+\`\`\`
+使用 use_skill 工具，skill_name：「superpowers:brainstorming」
+\`\`\`
 
-### Personal Skills
+### 個人技能
 
-Create your own skills in `~/.config/opencode/skills/`:
+在 \`~/.config/opencode/skills/\` 中創建你自己的技能：
 
-```bash
+\`\`\`bash
 mkdir -p ~/.config/opencode/skills/my-skill
-```
+\`\`\`
 
-Create `~/.config/opencode/skills/my-skill/SKILL.md`:
+創建 \`~/.config/opencode/skills/my-skill/SKILL.md\`：
 
-```markdown
+\`\`\`markdown
 ---
 name: my-skill
-description: Use when [condition] - [what it does]
+description: 使用時 [條件] - [它的作用]
 ---
 
-# My Skill
+# 我的技能
 
-[Your skill content here]
-```
+[你的技能內容在這裡]
+\`\`\`
 
-Personal skills override superpowers skills with the same name.
+個人技能覆蓋同名的 superpowers 技能。
 
-## Updating
+## 更新
 
-```bash
+\`\`\`bash
 cd ~/.config/opencode/superpowers
 git pull
-```
+\`\`\`
 
-## Troubleshooting
+## 故障排除
 
-### Plugin not loading
+### 插件未加載
 
-1. Check plugin file exists: `ls ~/.config/opencode/superpowers/.opencode/plugin/superpowers.js`
-2. Check OpenCode logs for errors
-3. Verify Node.js is installed: `node --version`
+1. 檢查插件文件存在：\`ls ~/.config/opencode/superpowers/.opencode/plugin/superpowers.js\`
+2. 檢查 OpenCode 日誌中的錯誤
+3. 驗證 Node.js 已安裝：\`node --version\`
 
-### Skills not found
+### 未找到技能
 
-1. Verify skills directory exists: `ls ~/.config/opencode/superpowers/skills`
-2. Use `find_skills` tool to see what's discovered
-3. Check file structure: each skill should have a `SKILL.md` file
+1. 驗證技能目錄存在：\`ls ~/.config/opencode/superpowers/skills\`
+2. 使用 \`find_skills\` 工具看看發現了什麼
+3. 檢查文件結構：每個技能應該有一個 \`SKILL.md\` 文件
 
-### Tool mapping issues
+### 工具映射問題
 
-When a skill references a Claude Code tool you don't have:
-- `TodoWrite` → use `update_plan`
-- `Task` with subagents → use `@mention` syntax to invoke OpenCode subagents
-- `Skill` → use `use_skill` tool
-- File operations → use your native tools
+當技能引用你沒有的 Claude Code 工具時：
+- \`TodoWrite\` → 使用 \`update_plan\`
+- \`Task\` with subagents → 使用 \`@mention\` 語法調用 OpenCode subagents
+- \`Skill\` → 使用 \`use_skill\` 工具
+- 文件操作 → 使用你的原生工具
 
-## Getting Help
+## 獲得幫助
 
-- Report issues: https://github.com/obra/superpowers/issues
-- Documentation: https://github.com/obra/superpowers
-```
+- 報告問題：https://github.com/obra/superpowers/issues
+- 文檔：https://github.com/obra/superpowers
+\`\`\`
 
-**Step 2: Verify file created**
+**步驟 2：驗證文件已創建**
 
-Run: `ls -l .opencode/INSTALL.md`
-Expected: File exists
+運行：`ls -l .opencode/INSTALL.md`
+預期：文件存在
 
-**Step 3: Commit**
+**步驟 3：提交**
 
 ```bash
 git add .opencode/INSTALL.md
@@ -896,35 +896,35 @@ git commit -m "docs: add opencode installation guide"
 
 ---
 
-### Task 14: Update Main README
+### 任務 14：更新主 README
 
-**Files:**
-- Modify: `README.md`
+**文件：**
+- 修改：`README.md`
 
-**Step 1: Add OpenCode section**
+**步驟 1：添加 OpenCode 部分**
 
-Find the section about supported platforms (search for "Codex" in the file), and add after it:
+找到關於支持的平台的部分（在文件中搜索「Codex」），並在其後添加：
 
 ```markdown
 ### OpenCode
 
-Superpowers works with [OpenCode.ai](https://opencode.ai) through a native JavaScript plugin.
+Superpowers 通過原生 JavaScript 插件與 [OpenCode.ai](https://opencode.ai) 一起工作。
 
-**Installation:** See [.opencode/INSTALL.md](.opencode/INSTALL.md)
+**安裝：** 見 [.opencode/INSTALL.md](.opencode/INSTALL.md)
 
-**Features:**
-- Custom tools: `use_skill` and `find_skills`
-- Automatic session bootstrap
-- Personal skills with shadowing
-- Supporting files and scripts access
+**功能：**
+- 自定義工具：`use_skill` 和 `find_skills`
+- 自動會話引導程序
+- 帶遮蔽的個人技能
+- 支持文件和腳本訪問
 ```
 
-**Step 2: Verify formatting**
+**步驟 2：驗證格式**
 
-Run: `grep -A 10 "### OpenCode" README.md`
-Expected: Shows the section you added
+運行：`grep -A 10 "### OpenCode" README.md`
+預期：顯示你添加的部分
 
-**Step 3: Commit**
+**步驟 3：提交**
 
 ```bash
 git add README.md
@@ -933,42 +933,42 @@ git commit -m "docs: add opencode support to readme"
 
 ---
 
-### Task 15: Update Release Notes
+### 任務 15：更新發布說明
 
-**Files:**
-- Modify: `RELEASE-NOTES.md`
+**文件：**
+- 修改：`RELEASE-NOTES.md`
 
-**Step 1: Add entry for OpenCode support**
+**步驟 1：添加 OpenCode 支持條目**
 
-At the top of the file (after the header), add:
+在文件頂部（標題後），添加：
 
 ```markdown
-## [Unreleased]
+## [未發布]
 
-### Added
+### 添加
 
-- **OpenCode Support**: Native JavaScript plugin for OpenCode.ai
-  - Custom tools: `use_skill` and `find_skills`
-  - Automatic session bootstrap with tool mapping instructions
-  - Shared core module (`lib/skills-core.js`) for code reuse
-  - Installation guide in `.opencode/INSTALL.md`
+- **OpenCode 支持**：OpenCode.ai 的原生 JavaScript 插件
+  - 自定義工具：`use_skill` 和 `find_skills`
+  - 帶工具映射說明的自動會話引導程序
+  - 共享核心模塊（`lib/skills-core.js`）用於代碼重用
+  - `.opencode/INSTALL.md` 中的安裝指南
 
-### Changed
+### 變更
 
-- **Refactored Codex Implementation**: Now uses shared `lib/skills-core.js` module
-  - Eliminates code duplication between Codex and OpenCode
-  - Single source of truth for skill discovery and parsing
+- **重構的 Codex 實現**：現在使用共享 `lib/skills-core.js` 模塊
+  - 消除了 Codex 和 OpenCode 之間的代碼重複
+  - 技能發現和解析的單一事實來源
 
 ---
 
 ```
 
-**Step 2: Verify formatting**
+**步驟 2：驗證格式**
 
-Run: `head -30 RELEASE-NOTES.md`
-Expected: Shows your new section
+運行：`head -30 RELEASE-NOTES.md`
+預期：顯示你的新部分
 
-**Step 3: Commit**
+**步驟 3：提交**
 
 ```bash
 git add RELEASE-NOTES.md
@@ -977,54 +977,54 @@ git commit -m "docs: add opencode support to release notes"
 
 ---
 
-## Phase 5: Final Verification
+## 階段 5：最終驗證
 
-### Task 16: Test Codex Still Works
+### 任務 16：測試 Codex 仍然工作
 
-**Files:**
-- Test: `.codex/superpowers-codex`
+**文件：**
+- 測試：`.codex/superpowers-codex`
 
-**Step 1: Test find-skills command**
+**步驟 1：測試 find-skills 命令**
 
-Run: `.codex/superpowers-codex find-skills | head -20`
-Expected: Shows list of skills with names and descriptions
+運行：`.codex/superpowers-codex find-skills | head -20`
+預期：顯示技能清單，帶名稱和描述
 
-**Step 2: Test use-skill command**
+**步驟 2：測試 use-skill 命令**
 
-Run: `.codex/superpowers-codex use-skill superpowers:brainstorming | head -20`
-Expected: Shows brainstorming skill content
+運行：`.codex/superpowers-codex use-skill superpowers:brainstorming | head -20`
+預期：顯示腦力激蕩技能內容
 
-**Step 3: Test bootstrap command**
+**步驟 3：測試 bootstrap 命令**
 
-Run: `.codex/superpowers-codex bootstrap | head -30`
-Expected: Shows bootstrap content with instructions
+運行：`.codex/superpowers-codex bootstrap | head -30`
+預期：顯示帶說明的引導程序內容
 
-**Step 4: If all tests pass, record success**
+**步驟 4：如果所有測試都通過，記錄成功**
 
-No commit needed - this is verification only.
+無需提交 - 這只是驗證。
 
 ---
 
-### Task 17: Verify File Structure
+### 任務 17：驗證文件結構
 
-**Files:**
-- Check: All new files exist
+**文件：**
+- 檢查：所有新文件存在
 
-**Step 1: Verify all files created**
+**步驟 1：驗證所有文件已創建**
 
-Run:
+運行：
 ```bash
 ls -l lib/skills-core.js
 ls -l .opencode/plugin/superpowers.js
 ls -l .opencode/INSTALL.md
 ```
 
-Expected: All files exist
+預期：所有文件存在
 
-**Step 2: Verify directory structure**
+**步驟 2：驗證目錄結構**
 
-Run: `tree -L 2 .opencode/` (or `find .opencode -type f` if tree not available)
-Expected:
+運行：`tree -L 2 .opencode/`（或 `find .opencode -type f`，如果 tree 不可用）
+預期：
 ```
 .opencode/
 ├── INSTALL.md
@@ -1032,64 +1032,64 @@ Expected:
     └── superpowers.js
 ```
 
-**Step 3: If structure correct, proceed**
+**步驟 3：如果結構正確，繼續**
 
-No commit needed - this is verification only.
-
----
-
-### Task 18: Final Commit and Summary
-
-**Files:**
-- Check: `git status`
-
-**Step 1: Check git status**
-
-Run: `git status`
-Expected: Working tree clean, all changes committed
-
-**Step 2: Review commit log**
-
-Run: `git log --oneline -20`
-Expected: Shows all commits from this implementation
-
-**Step 3: Create summary document**
-
-Create a completion summary showing:
-- Total commits made
-- Files created: `lib/skills-core.js`, `.opencode/plugin/superpowers.js`, `.opencode/INSTALL.md`
-- Files modified: `.codex/superpowers-codex`, `README.md`, `RELEASE-NOTES.md`
-- Testing performed: Codex commands verified
-- Ready for: Testing with actual OpenCode installation
-
-**Step 4: Report completion**
-
-Present summary to user and offer to:
-1. Push to remote
-2. Create pull request
-3. Test with real OpenCode installation (requires OpenCode installed)
+無需提交 - 這只是驗證。
 
 ---
 
-## Testing Guide (Manual - Requires OpenCode)
+### 任務 18：最終提交和摘要
 
-These steps require OpenCode to be installed and are not part of the automated implementation:
+**文件：**
+- 檢查：`git status`
 
-1. **Install skills**: Follow `.opencode/INSTALL.md`
-2. **Start OpenCode session**: Verify bootstrap appears
-3. **Test find_skills**: Should list all available skills
-4. **Test use_skill**: Load a skill and verify content appears
-5. **Test supporting files**: Verify skill directory paths are accessible
-6. **Test personal skills**: Create a personal skill and verify it shadows core
-7. **Test tool mapping**: Verify TodoWrite → update_plan mapping works
+**步驟 1：檢查 git 狀態**
 
-## Success Criteria
+運行：`git status`
+預期：工作樹乾淨，所有變更都已提交
 
-- [ ] `lib/skills-core.js` created with all core functions
-- [ ] `.codex/superpowers-codex` refactored to use shared core
-- [ ] Codex commands still work (find-skills, use-skill, bootstrap)
-- [ ] `.opencode/plugin/superpowers.js` created with tools and hooks
-- [ ] Installation guide created
-- [ ] README and RELEASE-NOTES updated
-- [ ] All changes committed
-- [ ] Working tree clean
+**步驟 2：審查提交日誌**
+
+運行：`git log --oneline -20`
+預期：顯示此實現的所有提交
+
+**步驟 3：創建摘要文檔**
+
+創建完成摘要，顯示：
+- 進行的總提交數
+- 創建的文件：`lib/skills-core.js`、`.opencode/plugin/superpowers.js`、`.opencode/INSTALL.md`
+- 修改的文件：`.codex/superpowers-codex`、`README.md`、`RELEASE-NOTES.md`
+- 執行的測試：驗證了 Codex 命令
+- 準備好：用實際 OpenCode 安裝進行測試
+
+**步驟 4：報告完成**
+
+向用戶呈現摘要並提供以下選項：
+1. 推送到遠程
+2. 創建拉請求
+3. 用實際 OpenCode 安裝進行測試（需要 OpenCode 已安裝）
+
+---
+
+## 測試指南（手動 - 需要 OpenCode）
+
+這些步驟需要 OpenCode 已安裝，不是自動實現的一部分：
+
+1. **安裝技能**：遵循 `.opencode/INSTALL.md`
+2. **啟動 OpenCode 會話**：驗證引導程序出現
+3. **測試 find_skills**：應列出所有可用技能
+4. **測試 use_skill**：加載技能並驗證內容出現
+5. **測試支持文件**：驗證技能目錄路徑可訪問
+6. **測試個人技能**：創建個人技能並驗證它遮蔽核心
+7. **測試工具映射**：驗證 TodoWrite → update_plan 映射工作
+
+## 成功標準
+
+- [ ] `lib/skills-core.js` 已創建，所有核心函數
+- [ ] `.codex/superpowers-codex` 已重構以使用共享核心
+- [ ] Codex 命令仍然工作（find-skills、use-skill、bootstrap）
+- [ ] `.opencode/plugin/superpowers.js` 已創建，帶工具和鉤子
+- [ ] 安裝指南已創建
+- [ ] README 和 RELEASE-NOTES 已更新
+- [ ] 所有變更都已提交
+- [ ] 工作樹乾淨

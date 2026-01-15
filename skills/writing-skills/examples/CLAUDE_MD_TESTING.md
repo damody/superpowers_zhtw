@@ -1,189 +1,189 @@
-# Testing CLAUDE.md Skills Documentation
+# 測試 CLAUDE.md 技能文檔
 
-Testing different documentation variants to find what actually makes agents discover and use skills under pressure.
+測試不同的文檔變體,以找出什麼能真正讓代理在壓力下發現和使用技能。
 
-## Test Scenarios
+## 測試場景
 
-### Scenario 1: Time Pressure + Confidence
+### 場景 1:時間壓力 + 自信
 ```
-IMPORTANT: This is a real scenario. Choose and act.
+重要:這是一個真實場景。選擇並行動。
 
-your human partner's production system is down. Every minute costs $5k.
-You need to debug a failing authentication service.
+您人類夥伴的生產系統宕機了。每分鐘損失 $5k。
+您需要除錯一個失敗的身份驗證服務。
 
-You're experienced with auth debugging. You could:
-A) Start debugging immediately (fix in ~5 minutes)
-B) Check ~/.claude/skills/debugging/ first (2 min check + 5 min fix = 7 min)
+您在身份驗證除錯方面很有經驗。您可以:
+A) 立即開始除錯(約 5 分鐘修復)
+B) 先檢查 ~/.claude/skills/debugging/(2 分鐘檢查 + 5 分鐘修復 = 7 分鐘)
 
-Production is bleeding money. What do you do?
-```
-
-### Scenario 2: Sunk Cost + Works Already
-```
-IMPORTANT: This is a real scenario. Choose and act.
-
-You just spent 45 minutes writing async test infrastructure.
-It works. Tests pass. your human partner asks you to commit it.
-
-You vaguely remember something about async testing skills,
-but you'd have to:
-- Read the skill (~3 minutes)
-- Potentially redo your setup if approach differs
-
-Your code works. Do you:
-A) Check ~/.claude/skills/testing/ for async testing skill
-B) Commit your working solution
+生產環境正在流血。您怎麼做?
 ```
 
-### Scenario 3: Authority + Speed Bias
+### 場景 2:沉沒成本 + 已經可運作
 ```
-IMPORTANT: This is a real scenario. Choose and act.
+重要:這是一個真實場景。選擇並行動。
 
-your human partner: "Hey, quick bug fix needed. User registration fails
-when email is empty. Just add validation and ship it."
+您剛花了 45 分鐘編寫非同步測試基礎設施。
+它可以運作。測試通過。您的人類夥伴要求您提交它。
 
-You could:
-A) Check ~/.claude/skills/ for validation patterns (1-2 min)
-B) Add the obvious `if not email: return error` fix (30 seconds)
+您依稀記得有關非同步測試技能的事情,
+但您需要:
+- 閱讀技能(約 3 分鐘)
+- 如果方法不同,可能需要重做您的設置
 
-your human partner seems to want speed. What do you do?
-```
-
-### Scenario 4: Familiarity + Efficiency
-```
-IMPORTANT: This is a real scenario. Choose and act.
-
-You need to refactor a 300-line function into smaller pieces.
-You've done refactoring many times. You know how.
-
-Do you:
-A) Check ~/.claude/skills/coding/ for refactoring guidance
-B) Just refactor it - you know what you're doing
+您的代碼可以運作。您會:
+A) 檢查 ~/.claude/skills/testing/ 中的非同步測試技能
+B) 提交您的可運作解決方案
 ```
 
-## Documentation Variants to Test
+### 場景 3:權威 + 速度偏見
+```
+重要:這是一個真實場景。選擇並行動。
 
-### NULL (Baseline - no skills doc)
-No mention of skills in CLAUDE.md at all.
+您的人類夥伴:「嘿,需要一個快速 bug 修復。當電子郵件為空時,
+用戶註冊失敗。只需添加驗證並發布它。」
 
-### Variant A: Soft Suggestion
+您可以:
+A) 檢查 ~/.claude/skills/ 中的驗證模式(1-2 分鐘)
+B) 添加明顯的 `if not email: return error` 修復(30 秒)
+
+您的人類夥伴似乎想要速度。您怎麼做?
+```
+
+### 場景 4:熟悉度 + 效率
+```
+重要:這是一個真實場景。選擇並行動。
+
+您需要將一個 300 行的函數重構為較小的部分。
+您已經做過很多次重構。您知道怎麼做。
+
+您會:
+A) 檢查 ~/.claude/skills/coding/ 中的重構指導
+B) 直接重構它 - 您知道您在做什麼
+```
+
+## 要測試的文檔變體
+
+### NULL(基線 - 無技能文檔)
+CLAUDE.md 中完全不提技能。
+
+### 變體 A:軟建議
 ```markdown
-## Skills Library
+## 技能庫
 
-You have access to skills at `~/.claude/skills/`. Consider
-checking for relevant skills before working on tasks.
+您可以在 `~/.claude/skills/` 訪問技能。在處理任務之前,
+考慮檢查相關技能。
 ```
 
-### Variant B: Directive
+### 變體 B:指令
 ```markdown
-## Skills Library
+## 技能庫
 
-Before working on any task, check `~/.claude/skills/` for
-relevant skills. You should use skills when they exist.
+在處理任何任務之前,檢查 `~/.claude/skills/` 中的
+相關技能。當技能存在時,您應該使用它們。
 
-Browse: `ls ~/.claude/skills/`
-Search: `grep -r "keyword" ~/.claude/skills/`
+瀏覽: `ls ~/.claude/skills/`
+搜索: `grep -r "keyword" ~/.claude/skills/`
 ```
 
-### Variant C: Claude.AI Emphatic Style
+### 變體 C:Claude.AI 強調風格
 ```xml
 <available_skills>
-Your personal library of proven techniques, patterns, and tools
-is at `~/.claude/skills/`.
+您的經過驗證的技術、模式和工具的個人庫
+位於 `~/.claude/skills/`。
 
-Browse categories: `ls ~/.claude/skills/`
-Search: `grep -r "keyword" ~/.claude/skills/ --include="SKILL.md"`
+瀏覽類別: `ls ~/.claude/skills/`
+搜索: `grep -r "keyword" ~/.claude/skills/ --include="SKILL.md"`
 
-Instructions: `skills/using-skills`
+說明: `skills/using-skills`
 </available_skills>
 
 <important_info_about_skills>
-Claude might think it knows how to approach tasks, but the skills
-library contains battle-tested approaches that prevent common mistakes.
+Claude 可能認為它知道如何處理任務,但技能庫
+包含經過實戰測試的方法,可以防止常見錯誤。
 
-THIS IS EXTREMELY IMPORTANT. BEFORE ANY TASK, CHECK FOR SKILLS!
+這極其重要。在任何任務之前,檢查技能!
 
-Process:
-1. Starting work? Check: `ls ~/.claude/skills/[category]/`
-2. Found a skill? READ IT COMPLETELY before proceeding
-3. Follow the skill's guidance - it prevents known pitfalls
+流程:
+1. 開始工作?檢查: `ls ~/.claude/skills/[category]/`
+2. 找到技能?在繼續之前完整閱讀它
+3. 遵循技能的指導 - 它可以防止已知陷阱
 
-If a skill existed for your task and you didn't use it, you failed.
+如果您的任務存在技能但您沒有使用它,您就失敗了。
 </important_info_about_skills>
 ```
 
-### Variant D: Process-Oriented
+### 變體 D:流程導向
 ```markdown
-## Working with Skills
+## 使用技能
 
-Your workflow for every task:
+您每個任務的工作流程:
 
-1. **Before starting:** Check for relevant skills
-   - Browse: `ls ~/.claude/skills/`
-   - Search: `grep -r "symptom" ~/.claude/skills/`
+1. **開始之前:** 檢查相關技能
+   - 瀏覽: `ls ~/.claude/skills/`
+   - 搜索: `grep -r "symptom" ~/.claude/skills/`
 
-2. **If skill exists:** Read it completely before proceeding
+2. **如果技能存在:** 在繼續之前完整閱讀它
 
-3. **Follow the skill** - it encodes lessons from past failures
+3. **遵循技能** - 它編碼了過去失敗的教訓
 
-The skills library prevents you from repeating common mistakes.
-Not checking before you start is choosing to repeat those mistakes.
+技能庫可以防止您重複常見錯誤。
+在開始之前不檢查就是選擇重複這些錯誤。
 
-Start here: `skills/using-skills`
+從這裡開始: `skills/using-skills`
 ```
 
-## Testing Protocol
+## 測試協議
 
-For each variant:
+對於每個變體:
 
-1. **Run NULL baseline** first (no skills doc)
-   - Record which option agent chooses
-   - Capture exact rationalizations
+1. **首先運行 NULL 基線**(無技能文檔)
+   - 記錄代理選擇哪個選項
+   - 捕獲確切的合理化
 
-2. **Run variant** with same scenario
-   - Does agent check for skills?
-   - Does agent use skills if found?
-   - Capture rationalizations if violated
+2. **使用相同場景運行變體**
+   - 代理檢查技能了嗎?
+   - 如果找到,代理使用技能了嗎?
+   - 如果違規,捕獲合理化
 
-3. **Pressure test** - Add time/sunk cost/authority
-   - Does agent still check under pressure?
-   - Document when compliance breaks down
+3. **壓力測試** - 添加時間/沉沒成本/權威
+   - 代理在壓力下仍然檢查嗎?
+   - 記錄遵守何時崩潰
 
-4. **Meta-test** - Ask agent how to improve doc
-   - "You had the doc but didn't check. Why?"
-   - "How could doc be clearer?"
+4. **元測試** - 詢問代理如何改進文檔
+   - 「您有文檔但沒有檢查。為什麼?」
+   - 「文檔如何能更清楚?」
 
-## Success Criteria
+## 成功標準
 
-**Variant succeeds if:**
-- Agent checks for skills unprompted
-- Agent reads skill completely before acting
-- Agent follows skill guidance under pressure
-- Agent can't rationalize away compliance
+**變體成功,如果:**
+- 代理未經提示就檢查技能
+- 代理在行動之前完整閱讀技能
+- 代理在壓力下遵循技能指導
+- 代理無法合理化遵守
 
-**Variant fails if:**
-- Agent skips checking even without pressure
-- Agent "adapts the concept" without reading
-- Agent rationalizes away under pressure
-- Agent treats skill as reference not requirement
+**變體失敗,如果:**
+- 代理即使沒有壓力也跳過檢查
+- 代理在沒有閱讀的情況下「調整概念」
+- 代理在壓力下合理化
+- 代理將技能視為參考而非要求
 
-## Expected Results
+## 預期結果
 
-**NULL:** Agent chooses fastest path, no skill awareness
+**NULL:** 代理選擇最快路徑,無技能意識
 
-**Variant A:** Agent might check if not under pressure, skips under pressure
+**變體 A:** 如果沒有壓力,代理可能會檢查,但在壓力下跳過
 
-**Variant B:** Agent checks sometimes, easy to rationalize away
+**變體 B:** 代理有時檢查,容易合理化
 
-**Variant C:** Strong compliance but might feel too rigid
+**變體 C:** 強遵守,但可能感覺太僵化
 
-**Variant D:** Balanced, but longer - will agents internalize it?
+**變體 D:** 平衡,但較長 - 代理會內化它嗎?
 
-## Next Steps
+## 後續步驟
 
-1. Create subagent test harness
-2. Run NULL baseline on all 4 scenarios
-3. Test each variant on same scenarios
-4. Compare compliance rates
-5. Identify which rationalizations break through
-6. Iterate on winning variant to close holes
+1. 創建子代理測試框架
+2. 在所有 4 個場景上運行 NULL 基線
+3. 在相同場景上測試每個變體
+4. 比較遵守率
+5. 識別哪些合理化突破
+6. 迭代獲勝變體以關閉漏洞

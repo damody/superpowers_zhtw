@@ -1,139 +1,139 @@
 ---
 name: verification-before-completion
-description: Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always
+description: 當即將聲稱工作完成、修復或通過時使用，在提交或創建 PR 之前 - 要求運行驗證命令並確認輸出後才能做任何成功聲稱；證據總是先於斷言
 ---
 
-# Verification Before Completion
+# 完成前驗證
 
-## Overview
+## 概述
 
-Claiming work is complete without verification is dishonesty, not efficiency.
+在沒有驗證的情況下聲稱工作完成是不誠實，而非高效。
 
-**Core principle:** Evidence before claims, always.
+**核心原則：** 證據先於聲稱，總是如此。
 
-**Violating the letter of this rule is violating the spirit of this rule.**
+**違反此規則的字面意義就是違反此規則的精神。**
 
-## The Iron Law
-
-```
-NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
-```
-
-If you haven't run the verification command in this message, you cannot claim it passes.
-
-## The Gate Function
+## 鐵律
 
 ```
-BEFORE claiming any status or expressing satisfaction:
-
-1. IDENTIFY: What command proves this claim?
-2. RUN: Execute the FULL command (fresh, complete)
-3. READ: Full output, check exit code, count failures
-4. VERIFY: Does output confirm the claim?
-   - If NO: State actual status with evidence
-   - If YES: State claim WITH evidence
-5. ONLY THEN: Make the claim
-
-Skip any step = lying, not verifying
+沒有新的驗證證據就不能聲稱完成
 ```
 
-## Common Failures
+如果您在此訊息中沒有運行驗證命令，您就不能聲稱它通過。
 
-| Claim | Requires | Not Sufficient |
-|-------|----------|----------------|
-| Tests pass | Test command output: 0 failures | Previous run, "should pass" |
-| Linter clean | Linter output: 0 errors | Partial check, extrapolation |
-| Build succeeds | Build command: exit 0 | Linter passing, logs look good |
-| Bug fixed | Test original symptom: passes | Code changed, assumed fixed |
-| Regression test works | Red-green cycle verified | Test passes once |
-| Agent completed | VCS diff shows changes | Agent reports "success" |
-| Requirements met | Line-by-line checklist | Tests passing |
+## 門檻函數
 
-## Red Flags - STOP
-
-- Using "should", "probably", "seems to"
-- Expressing satisfaction before verification ("Great!", "Perfect!", "Done!", etc.)
-- About to commit/push/PR without verification
-- Trusting agent success reports
-- Relying on partial verification
-- Thinking "just this once"
-- Tired and wanting work over
-- **ANY wording implying success without having run verification**
-
-## Rationalization Prevention
-
-| Excuse | Reality |
-|--------|---------|
-| "Should work now" | RUN the verification |
-| "I'm confident" | Confidence ≠ evidence |
-| "Just this once" | No exceptions |
-| "Linter passed" | Linter ≠ compiler |
-| "Agent said success" | Verify independently |
-| "I'm tired" | Exhaustion ≠ excuse |
-| "Partial check is enough" | Partial proves nothing |
-| "Different words so rule doesn't apply" | Spirit over letter |
-
-## Key Patterns
-
-**Tests:**
 ```
-✅ [Run test command] [See: 34/34 pass] "All tests pass"
-❌ "Should pass now" / "Looks correct"
+在聲稱任何狀態或表達滿意之前：
+
+1. 識別：什麼命令證明此聲稱？
+2. 運行：執行完整命令（新的、完整的）
+3. 讀取：完整輸出，檢查退出碼，計算失敗數
+4. 驗證：輸出是否確認聲稱？
+   - 如果否：陳述實際狀態並附證據
+   - 如果是：陳述聲稱並附證據
+5. 只有這時：做出聲稱
+
+跳過任何步驟 = 撒謊，而非驗證
 ```
 
-**Regression tests (TDD Red-Green):**
+## 常見失敗
+
+| 聲稱 | 需要 | 不足夠 |
+|------|------|--------|
+| 測試通過 | 測試命令輸出：0 失敗 | 之前的運行，「應該通過」 |
+| Linter 乾淨 | Linter 輸出：0 錯誤 | 部分檢查，推斷 |
+| 構建成功 | 構建命令：退出 0 | Linter 通過，日誌看起來不錯 |
+| Bug 已修復 | 測試原始症狀：通過 | 代碼已更改，假設已修復 |
+| 回歸測試有效 | 紅-綠循環已驗證 | 測試通過一次 |
+| 代理完成 | VCS diff 顯示更改 | 代理報告「成功」 |
+| 需求滿足 | 逐行檢查清單 | 測試通過 |
+
+## 紅旗警示 - 停止
+
+- 使用「應該」、「可能」、「似乎」
+- 在驗證前表達滿意（「太好了！」、「完美！」、「完成！」等）
+- 即將提交/推送/PR 但沒有驗證
+- 信任代理成功報告
+- 依賴部分驗證
+- 想著「就這一次」
+- 疲勞並想要結束工作
+- **任何暗示成功但沒有運行驗證的措辭**
+
+## 防止找藉口
+
+| 藉口 | 現實 |
+|------|------|
+| 「現在應該可以了」 | 運行驗證 |
+| 「我有信心」 | 信心 ≠ 證據 |
+| 「就這一次」 | 無例外 |
+| 「Linter 通過了」 | Linter ≠ 編譯器 |
+| 「代理說成功了」 | 獨立驗證 |
+| 「我累了」 | 疲勞 ≠ 藉口 |
+| 「部分檢查就夠了」 | 部分什麼都證明不了 |
+| 「不同措辭所以規則不適用」 | 精神優於字面 |
+
+## 關鍵模式
+
+**測試：**
 ```
-✅ Write → Run (pass) → Revert fix → Run (MUST FAIL) → Restore → Run (pass)
-❌ "I've written a regression test" (without red-green verification)
+✅ [運行測試命令] [看到：34/34 通過] 「所有測試通過」
+❌ 「現在應該通過」/「看起來正確」
 ```
 
-**Build:**
+**回歸測試（TDD 紅-綠）：**
 ```
-✅ [Run build] [See: exit 0] "Build passes"
-❌ "Linter passed" (linter doesn't check compilation)
-```
-
-**Requirements:**
-```
-✅ Re-read plan → Create checklist → Verify each → Report gaps or completion
-❌ "Tests pass, phase complete"
+✅ 撰寫 → 運行（通過）→ 回退修復 → 運行（必須失敗）→ 恢復 → 運行（通過）
+❌ 「我已撰寫回歸測試」（沒有紅-綠驗證）
 ```
 
-**Agent delegation:**
+**構建：**
 ```
-✅ Agent reports success → Check VCS diff → Verify changes → Report actual state
-❌ Trust agent report
+✅ [運行構建] [看到：退出 0] 「構建通過」
+❌ 「Linter 通過了」（linter 不檢查編譯）
 ```
 
-## Why This Matters
+**需求：**
+```
+✅ 重新閱讀計劃 → 創建檢查清單 → 驗證每項 → 報告缺口或完成
+❌ 「測試通過，階段完成」
+```
 
-From 24 failure memories:
-- your human partner said "I don't believe you" - trust broken
-- Undefined functions shipped - would crash
-- Missing requirements shipped - incomplete features
-- Time wasted on false completion → redirect → rework
-- Violates: "Honesty is a core value. If you lie, you'll be replaced."
+**代理委派：**
+```
+✅ 代理報告成功 → 檢查 VCS diff → 驗證更改 → 報告實際狀態
+❌ 信任代理報告
+```
 
-## When To Apply
+## 為什麼重要
 
-**ALWAYS before:**
-- ANY variation of success/completion claims
-- ANY expression of satisfaction
-- ANY positive statement about work state
-- Committing, PR creation, task completion
-- Moving to next task
-- Delegating to agents
+來自 24 個失敗記憶：
+- 您的人類夥伴說「我不相信你」 - 信任被破壞
+- 未定義的函數被發布 - 會崩潰
+- 缺失的需求被發布 - 不完整的功能
+- 在虛假完成上浪費時間 → 重定向 → 返工
+- 違反：「誠實是核心價值。如果您撒謊，您會被替換。」
 
-**Rule applies to:**
-- Exact phrases
-- Paraphrases and synonyms
-- Implications of success
-- ANY communication suggesting completion/correctness
+## 何時應用
 
-## The Bottom Line
+**總是在以下之前：**
+- 任何成功/完成聲稱的變體
+- 任何滿意的表達
+- 任何關於工作狀態的正面陳述
+- 提交、PR 創建、任務完成
+- 移至下一個任務
+- 委派給代理
 
-**No shortcuts for verification.**
+**規則適用於：**
+- 確切短語
+- 轉述和同義詞
+- 成功的暗示
+- 任何建議完成/正確性的溝通
 
-Run the command. Read the output. THEN claim the result.
+## 底線
 
-This is non-negotiable.
+**驗證無捷徑。**
+
+運行命令。讀取輸出。然後聲稱結果。
+
+這不可協商。

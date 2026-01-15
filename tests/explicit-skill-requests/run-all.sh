@@ -1,6 +1,6 @@
 #!/bin/bash
-# Run all explicit skill request tests
-# Usage: ./run-all.sh
+# 運行所有顯式技能請求測試
+# 用法: ./run-all.sh
 
 set -e
 
@@ -14,7 +14,7 @@ PASSED=0
 FAILED=0
 RESULTS=""
 
-# Test: subagent-driven-development, please
+# 測試: subagent-driven-development, 請求
 echo ">>> Test 1: subagent-driven-development-please"
 if "$SCRIPT_DIR/run-test.sh" "subagent-driven-development" "$PROMPTS_DIR/subagent-driven-development-please.txt"; then
     PASSED=$((PASSED + 1))
@@ -25,7 +25,7 @@ else
 fi
 echo ""
 
-# Test: use systematic-debugging
+# 測試: 使用 systematic-debugging
 echo ">>> Test 2: use-systematic-debugging"
 if "$SCRIPT_DIR/run-test.sh" "systematic-debugging" "$PROMPTS_DIR/use-systematic-debugging.txt"; then
     PASSED=$((PASSED + 1))
@@ -36,7 +36,7 @@ else
 fi
 echo ""
 
-# Test: please use brainstorming
+# 測試: 請使用 brainstorming
 echo ">>> Test 3: please-use-brainstorming"
 if "$SCRIPT_DIR/run-test.sh" "brainstorming" "$PROMPTS_DIR/please-use-brainstorming.txt"; then
     PASSED=$((PASSED + 1))
@@ -47,7 +47,7 @@ else
 fi
 echo ""
 
-# Test: mid-conversation execute plan
+# 測試: 對話中執行計劃
 echo ">>> Test 4: mid-conversation-execute-plan"
 if "$SCRIPT_DIR/run-test.sh" "subagent-driven-development" "$PROMPTS_DIR/mid-conversation-execute-plan.txt"; then
     PASSED=$((PASSED + 1))

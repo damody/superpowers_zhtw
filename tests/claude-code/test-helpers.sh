@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
-# Helper functions for Claude Code skill tests
+# Claude Code 技能測試的輔助函數
 
-# Run Claude Code with a prompt and capture output
-# Usage: run_claude "prompt text" [timeout_seconds] [allowed_tools]
+# 使用提示運行 Claude Code 並捕獲輸出
+# 用法: run_claude "提示文本" [超時秒數] [允許的工具]
 run_claude() {
     local prompt="$1"
     local timeout="${2:-60}"
     local allowed_tools="${3:-}"
     local output_file=$(mktemp)
 
-    # Build command
+    # 構建命令
     local cmd="claude -p \"$prompt\""
     if [ -n "$allowed_tools" ]; then
         cmd="$cmd --allowed-tools=$allowed_tools"
     fi
 
-    # Run Claude in headless mode with timeout
+    # 在無頭模式下運行 Claude,帶有超時
     if timeout "$timeout" bash -c "$cmd" > "$output_file" 2>&1; then
         cat "$output_file"
         rm -f "$output_file"
@@ -28,8 +28,8 @@ run_claude() {
     fi
 }
 
-# Check if output contains a pattern
-# Usage: assert_contains "output" "pattern" "test name"
+# 檢查輸出是否包含模式
+# 用法: assert_contains "輸出" "模式" "測試名稱"
 assert_contains() {
     local output="$1"
     local pattern="$2"
@@ -47,8 +47,8 @@ assert_contains() {
     fi
 }
 
-# Check if output does NOT contain a pattern
-# Usage: assert_not_contains "output" "pattern" "test name"
+# 檢查輸出是否不包含模式
+# 用法: assert_not_contains "輸出" "模式" "測試名稱"
 assert_not_contains() {
     local output="$1"
     local pattern="$2"
@@ -66,8 +66,8 @@ assert_not_contains() {
     fi
 }
 
-# Check if output matches a count
-# Usage: assert_count "output" "pattern" expected_count "test name"
+# 檢查輸出是否匹配計數
+# 用法: assert_count "輸出" "模式" 預期計數 "測試名稱"
 assert_count() {
     local output="$1"
     local pattern="$2"
@@ -89,15 +89,15 @@ assert_count() {
     fi
 }
 
-# Check if pattern A appears before pattern B
-# Usage: assert_order "output" "pattern_a" "pattern_b" "test name"
+# 檢查模式 A 是否出現在模式 B 之前
+# 用法: assert_order "輸出" "模式_a" "模式_b" "測試名稱"
 assert_order() {
     local output="$1"
     local pattern_a="$2"
     local pattern_b="$3"
     local test_name="${4:-test}"
 
-    # Get line numbers where patterns appear
+    # 獲取模式出現的行號
     local line_a=$(echo "$output" | grep -n "$pattern_a" | head -1 | cut -d: -f1)
     local line_b=$(echo "$output" | grep -n "$pattern_b" | head -1 | cut -d: -f1)
 
@@ -122,15 +122,15 @@ assert_order() {
     fi
 }
 
-# Create a temporary test project directory
-# Usage: test_project=$(create_test_project)
+# 創建臨時測試項目目錄
+# 用法: test_project=$(create_test_project)
 create_test_project() {
     local test_dir=$(mktemp -d)
     echo "$test_dir"
 }
 
-# Cleanup test project
-# Usage: cleanup_test_project "$test_dir"
+# 清理測試項目
+# 用法: cleanup_test_project "$測試目錄"
 cleanup_test_project() {
     local test_dir="$1"
     if [ -d "$test_dir" ]; then
@@ -138,8 +138,8 @@ cleanup_test_project() {
     fi
 }
 
-# Create a simple plan file for testing
-# Usage: create_test_plan "$project_dir" "$plan_name"
+# 為測試創建簡單的計劃文件
+# 用法: create_test_plan "$項目目錄" "$計劃名稱"
 create_test_plan() {
     local project_dir="$1"
     local plan_name="${2:-test-plan}"
@@ -191,7 +191,7 @@ EOF
     echo "$plan_file"
 }
 
-# Export functions for use in tests
+# 導出函數以在測試中使用
 export -f run_claude
 export -f assert_contains
 export -f assert_not_contains

@@ -1,12 +1,12 @@
-// Complete implementation of condition-based waiting utilities
-// From: Lace test infrastructure improvements (2025-10-03)
-// Context: Fixed 15 flaky tests by replacing arbitrary timeouts
+// 基於條件的等待實用程序的完整實現
+// 來源: Lace 測試基礎設施改進 (2025-10-03)
+// 背景: 通過替換任意超時修復了 15 個不穩定的測試
 
 import type { ThreadManager } from '~/threads/thread-manager';
 import type { LaceEvent, LaceEventType } from '~/threads/types';
 
 /**
- * Wait for a specific event type to appear in thread
+ * 等待線程中出現特定事件類型
  *
  * @param threadManager - The thread manager to query
  * @param threadId - Thread to check for events
@@ -35,7 +35,7 @@ export function waitForEvent(
       } else if (Date.now() - startTime > timeoutMs) {
         reject(new Error(`Timeout waiting for ${eventType} event after ${timeoutMs}ms`));
       } else {
-        setTimeout(check, 10); // Poll every 10ms for efficiency
+        setTimeout(check, 10); // 每 10ms 輪詢一次以提高效率
       }
     };
 
@@ -44,7 +44,7 @@ export function waitForEvent(
 }
 
 /**
- * Wait for a specific number of events of a given type
+ * 等待特定類型的特定數量的事件
  *
  * @param threadManager - The thread manager to query
  * @param threadId - Thread to check for events
@@ -89,8 +89,8 @@ export function waitForEventCount(
 }
 
 /**
- * Wait for an event matching a custom predicate
- * Useful when you need to check event data, not just type
+ * 等待與自訂謂詞匹配的事件
+ * 當您需要檢查事件數據而不僅僅是類型時很有用
  *
  * @param threadManager - The thread manager to query
  * @param threadId - Thread to check for events
@@ -135,24 +135,24 @@ export function waitForEventMatch(
   });
 }
 
-// Usage example from actual debugging session:
+// 來自實際偵錯會話的使用示例:
 //
-// BEFORE (flaky):
+// 之前 (不穩定):
 // ---------------
 // const messagePromise = agent.sendMessage('Execute tools');
-// await new Promise(r => setTimeout(r, 300)); // Hope tools start in 300ms
+// await new Promise(r => setTimeout(r, 300)); // 希望工具在 300ms 內啟動
 // agent.abort();
 // await messagePromise;
-// await new Promise(r => setTimeout(r, 50));  // Hope results arrive in 50ms
-// expect(toolResults.length).toBe(2);         // Fails randomly
+// await new Promise(r => setTimeout(r, 50));  // 希望結果在 50ms 內到達
+// expect(toolResults.length).toBe(2);         // 隨機失敗
 //
-// AFTER (reliable):
+// 之後 (可靠):
 // ----------------
 // const messagePromise = agent.sendMessage('Execute tools');
-// await waitForEventCount(threadManager, threadId, 'TOOL_CALL', 2); // Wait for tools to start
+// await waitForEventCount(threadManager, threadId, 'TOOL_CALL', 2); // 等待工具啟動
 // agent.abort();
 // await messagePromise;
-// await waitForEventCount(threadManager, threadId, 'TOOL_RESULT', 2); // Wait for results
-// expect(toolResults.length).toBe(2); // Always succeeds
+// await waitForEventCount(threadManager, threadId, 'TOOL_RESULT', 2); // 等待結果
+// expect(toolResults.length).toBe(2); // 總是成功
 //
-// Result: 60% pass rate → 100%, 40% faster execution
+// 結果: 60% 通過率 → 100%, 執行速度提快 40%

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Bisection script to find which test creates unwanted files/state
-# Usage: ./find-polluter.sh <file_or_dir_to_check> <test_pattern>
-# Example: ./find-polluter.sh '.git' 'src/**/*.test.ts'
+# 二分查找腳本以找到哪個測試創建了不需要的文件/狀態
+# 用法: ./find-polluter.sh <file_or_dir_to_check> <test_pattern>
+# 示例: ./find-polluter.sh '.git' 'src/**/*.test.ts'
 
 set -e
 
@@ -14,50 +14,50 @@ fi
 POLLUTION_CHECK="$1"
 TEST_PATTERN="$2"
 
-echo "🔍 Searching for test that creates: $POLLUTION_CHECK"
+echo "🔍 正在搜索創建以下項目的測試: $POLLUTION_CHECK"
 echo "Test pattern: $TEST_PATTERN"
 echo ""
 
-# Get list of test files
+# 獲取測試文件列表
 TEST_FILES=$(find . -path "$TEST_PATTERN" | sort)
 TOTAL=$(echo "$TEST_FILES" | wc -l | tr -d ' ')
 
-echo "Found $TOTAL test files"
+echo "找到 $TOTAL 個測試文件"
 echo ""
 
 COUNT=0
 for TEST_FILE in $TEST_FILES; do
   COUNT=$((COUNT + 1))
 
-  # Skip if pollution already exists
+  # 如果污染已經存在則跳過
   if [ -e "$POLLUTION_CHECK" ]; then
-    echo "⚠️  Pollution already exists before test $COUNT/$TOTAL"
-    echo "   Skipping: $TEST_FILE"
+    echo "⚠️  在測試 $COUNT/$TOTAL 之前污染已存在"
+    echo "   跳過: $TEST_FILE"
     continue
   fi
 
-  echo "[$COUNT/$TOTAL] Testing: $TEST_FILE"
+  echo "[$COUNT/$TOTAL] 正在測試: $TEST_FILE"
 
-  # Run the test
+  # 運行測試
   npm test "$TEST_FILE" > /dev/null 2>&1 || true
 
-  # Check if pollution appeared
+  # 檢查污染是否出現
   if [ -e "$POLLUTION_CHECK" ]; then
     echo ""
-    echo "🎯 FOUND POLLUTER!"
-    echo "   Test: $TEST_FILE"
-    echo "   Created: $POLLUTION_CHECK"
+    echo "🎯 找到污染源!"
+    echo "   測試: $TEST_FILE"
+    echo "   已創建: $POLLUTION_CHECK"
     echo ""
-    echo "Pollution details:"
+    echo "污染詳情:"
     ls -la "$POLLUTION_CHECK"
     echo ""
-    echo "To investigate:"
-    echo "  npm test $TEST_FILE    # Run just this test"
-    echo "  cat $TEST_FILE         # Review test code"
+    echo "要調查:"
+    echo "  npm test $TEST_FILE    # 只運行此測試"
+    echo "  cat $TEST_FILE         # 查看測試代碼"
     exit 1
   fi
 done
 
 echo ""
-echo "✅ No polluter found - all tests clean!"
+echo "✅ 未找到污染源 - 所有測試都是乾��淨的!"
 exit 0

@@ -1,76 +1,76 @@
 ---
 name: executing-plans
-description: Use when you have a written implementation plan to execute in a separate session with review checkpoints
+description: 當您有書面實作計劃需要在單獨的會話中執行並設置審查檢查點時使用
 ---
 
-# Executing Plans
+# 執行計劃
 
-## Overview
+## 概述
 
-Load plan, review critically, execute tasks in batches, report for review between batches.
+加載計劃，批判性審查，分批執行任務，在批次之間報告以供審查。
 
-**Core principle:** Batch execution with checkpoints for architect review.
+**核心原則：** 帶檢查點的分批執行，供架構師審查。
 
-**Announce at start:** "I'm using the executing-plans skill to implement this plan."
+**開始時宣告：** 「我正在使用 executing-plans 技能實作此計劃。」
 
-## The Process
+## 流程
 
-### Step 1: Load and Review Plan
-1. Read plan file
-2. Review critically - identify any questions or concerns about the plan
-3. If concerns: Raise them with your human partner before starting
-4. If no concerns: Create TodoWrite and proceed
+### 步驟 1：加載和審查計劃
+1. 閱讀計劃文件
+2. 批判性審查 - 識別關於計劃的任何問題或疑慮
+3. 如果有疑慮：在開始之前向您的人類夥伴提出
+4. 如果沒有疑慮：創建 TodoWrite 並繼續
 
-### Step 2: Execute Batch
-**Default: First 3 tasks**
+### 步驟 2：執行批次
+**預設：前 3 個任務**
 
-For each task:
-1. Mark as in_progress
-2. Follow each step exactly (plan has bite-sized steps)
-3. Run verifications as specified
-4. Mark as completed
+對於每個任務：
+1. 標記為 in_progress
+2. 完全遵循每個步驟（計劃有小步驟）
+3. 按指定運行驗證
+4. 標記為已完成
 
-### Step 3: Report
-When batch complete:
-- Show what was implemented
-- Show verification output
-- Say: "Ready for feedback."
+### 步驟 3：報告
+批次完成時：
+- 顯示已實作的內容
+- 顯示驗證輸出
+- 說：「準備好接受反饋。」
 
-### Step 4: Continue
-Based on feedback:
-- Apply changes if needed
-- Execute next batch
-- Repeat until complete
+### 步驟 4：繼續
+根據反饋：
+- 如果需要應用更改
+- 執行下一批次
+- 重複直到完成
 
-### Step 5: Complete Development
+### 步驟 5：完成開發
 
-After all tasks complete and verified:
-- Announce: "I'm using the finishing-a-development-branch skill to complete this work."
-- **REQUIRED SUB-SKILL:** Use superpowers:finishing-a-development-branch
-- Follow that skill to verify tests, present options, execute choice
+所有任務完成並驗證後：
+- 宣告：「我正在使用 finishing-a-development-branch 技能完成此工作。」
+- **必需的子技能：** 使用 superpowers:finishing-a-development-branch
+- 遵循該技能驗證測試、呈現選項、執行選擇
 
-## When to Stop and Ask for Help
+## 何時停止並尋求幫助
 
-**STOP executing immediately when:**
-- Hit a blocker mid-batch (missing dependency, test fails, instruction unclear)
-- Plan has critical gaps preventing starting
-- You don't understand an instruction
-- Verification fails repeatedly
+**立即停止執行當：**
+- 在批次中遇到阻礙（缺少依賴項、測試失敗、指令不清楚）
+- 計劃有關鍵缺口阻止開始
+- 您不理解某個指令
+- 驗證反覆失敗
 
-**Ask for clarification rather than guessing.**
+**尋求澄清而不是猜測。**
 
-## When to Revisit Earlier Steps
+## 何時重新審視早期步驟
 
-**Return to Review (Step 1) when:**
-- Partner updates the plan based on your feedback
-- Fundamental approach needs rethinking
+**返回審查（步驟 1）當：**
+- 夥伴根據您的反饋更新計劃
+- 基本方法需要重新思考
 
-**Don't force through blockers** - stop and ask.
+**不要強行通過阻礙** - 停止並詢問。
 
-## Remember
-- Review plan critically first
-- Follow plan steps exactly
-- Don't skip verifications
-- Reference skills when plan says to
-- Between batches: just report and wait
-- Stop when blocked, don't guess
+## 記住
+- 首先批判性審查計劃
+- 完全遵循計劃步驟
+- 不要跳過驗證
+- 當計劃要求時引用技能
+- 批次之間：僅報告並等待
+- 遇到阻礙時停止，不要猜測
